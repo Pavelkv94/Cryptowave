@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { Navbar, Footer, Homepage, Cryptocurrencies } from "./components/index";
+import i18n from "i18next";
+import { useTranslation, initReactI18next } from "react-i18next";
+import translationEN from "./locales/en/translation.json";
+import translationRU from "./locales/ru/translation.json";
+import { Route, Routes } from "react-router-dom";
+import { Box } from "@chakra-ui/react";
+import { useState } from "react";
+
+const resources = {
+    en: {
+        translation: translationEN
+    },
+    ru: {
+        translation: translationRU
+    }
+};
+
+i18n.use(initReactI18next).init({
+    resources,
+    lng: "en",
+    fallbackLng: "en",
+    interpolation: {
+        escapeValue: false
+    }
+});
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
+    const { t } = useTranslation();
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <div className="app" >
+            <Navbar t={t}/>
+            <div className="main">
+                <div className="routes">
+                    <Routes>
+                        <Route element={<Homepage />} path="/" />
+                        <Route element={<Cryptocurrencies />} path="/cryptocurrencies" />
+
+                        {/* <Route element={<Exchanges />} path="/exchanges" />
+                        <Route element={<Cryptocurrencies />} path="/Cryptocurrencies" />
+                        <Route element={<CryptoDetails />} path="/crypto/:coinId" />
+                        <Route element={<News />} path="/news" /> */}
+                    </Routes>
+                </div>
+
+                <Footer />
+            </div>
+        </div>
+    );
 }
 
-export default App
+export default App;
