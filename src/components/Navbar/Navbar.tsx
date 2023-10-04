@@ -1,8 +1,8 @@
 import "./Navbar.scss";
 import logo from "../../images/CryptoWave1.svg";
-import { Avatar, Box, Button, Center, Divider, Flex, HStack, Icon, Image, LinkOverlay, Select, Spacer, Stack, Text } from "@chakra-ui/react";
+import { Avatar, Button, Center, Divider, HStack, Icon, Image, Select, Spacer, Text } from "@chakra-ui/react";
 import { TFunction } from "i18next";
-import { BiSun } from "react-icons/bi";
+import { ImEarth } from "react-icons/im";
 import { Link, useLocation } from "react-router-dom";
 
 type NavbarPropsType = {
@@ -46,11 +46,12 @@ const Navbar = ({ t }: NavbarPropsType) => {
                 </HStack>
                 <Spacer />
                 <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                    <Select variant="unstyled" w={"60px"} defaultValue={"RU"}>
-                        <option value="RU">RU</option>
-                        <option value="EN">EN</option>
+                     <Icon as={ImEarth} color={"white"}/>
+                    <Select variant="" w={"80px"} defaultValue={"EN"} size={"sm"}>
+                        <option value="RU" color="black">RU</option>
+                        <option value="EN" color="black">EN</option>
                     </Select>
-                    <HStack w="46px">
+                    {/* <HStack w="46px">
                         <Divider orientation="vertical" h={"30px"} />
                         <Icon as={BiSun} w={"26px"} h={"26px"} color="white" />
                         <Divider orientation="vertical" h={"30px"} />
@@ -58,7 +59,7 @@ const Navbar = ({ t }: NavbarPropsType) => {
                     <Button colorScheme="messenger" variant="solid">
                         {t("wallet")}
                     </Button>
-                    <Avatar />
+                    <Avatar /> */}
                 </HStack>
             </HStack>
         </div>

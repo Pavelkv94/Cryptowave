@@ -1,12 +1,11 @@
 import "./App.css";
-import { Navbar, Footer, Homepage, Cryptocurrencies } from "./components/index";
+import { Navbar, Footer, Homepage, Cryptocurrencies, News, CryptoDetails } from "./components/index";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
 import translationEN from "./locales/en/translation.json";
 import translationRU from "./locales/ru/translation.json";
 import { Route, Routes } from "react-router-dom";
-import { Box } from "@chakra-ui/react";
-import { useState } from "react";
+
 
 const resources = {
     en: {
@@ -39,11 +38,8 @@ function App() {
                     <Routes>
                         <Route element={<Homepage />} path="/" />
                         <Route element={<Cryptocurrencies />} path="/cryptocurrencies" />
-
-                        {/* <Route element={<Exchanges />} path="/exchanges" />
-                        <Route element={<Cryptocurrencies />} path="/Cryptocurrencies" />
+                        <Route element={<News />} path="/news" />
                         <Route element={<CryptoDetails />} path="/crypto/:coinId" />
-                        <Route element={<News />} path="/news" /> */}
                     </Routes>
                 </div>
 

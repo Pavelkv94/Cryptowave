@@ -1,5 +1,4 @@
 import { Divider, Text, VStack } from "@chakra-ui/react";
-import "./Footer.scss";
 
 const Footer = () => {
     const year = new Date().getFullYear();
