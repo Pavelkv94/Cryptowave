@@ -46,7 +46,7 @@ const Navbar = ({ t }: NavbarPropsType) => {
                 </HStack>
                 <Spacer />
                 <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                    <Icon as={ImEarth} color={"white"} />
+                    {/* <Icon as={ImEarth} color={"white"} />
                     <Select variant="" w={"80px"} defaultValue={"EN"} size={"sm"}>
                         <option value="RU" color="black">
                             RU
@@ -55,7 +55,7 @@ const Navbar = ({ t }: NavbarPropsType) => {
                             EN
                         </option>
                     </Select>
-                    {/* <HStack w="46px">
+                    <HStack w="46px">
                         <Divider orientation="vertical" h={"30px"} />
                         <Icon as={BiSun} w={"26px"} h={"26px"} color="white" />
                         <Divider orientation="vertical" h={"30px"} />

@@ -59,7 +59,7 @@ const Cryptocurrencies = () => {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        {cryptos.length === 0 && <Tr><Td>Not Found</Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td></Tr>}
+                        {cryptos?.length === 0 && <Tr><Td>Not Found</Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td></Tr>}
                         {cryptos?.map((coin:CoinType, i:number) => (
                             <LinkBox as={Tr} key={i}>
                                 <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}<LinkOverlay href={`/crypto/${coin.uuid}`}/></Td>

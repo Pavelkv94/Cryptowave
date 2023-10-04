@@ -94,9 +94,9 @@ const News = ({ simplified }: NewsPropsType) => {
 
     return (
         <Box maxW={"1200px"} margin={"0 auto"}>
-            <Center margin={"40px 0"}>
+            {!simplified && <Center margin={"40px 0"}>
                 <Heading>Latest Crypto News</Heading>
-            </Center>
+            </Center>}
             {!simplified && (
                 <HStack marginBottom={"40px"}>
                     <Text fontSize={"md"}>Select news category: </Text>
