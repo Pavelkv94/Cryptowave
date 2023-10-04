@@ -95,7 +95,7 @@ const CryptoDetails = () => {
                 <VStack alignItems={"flex-start"} w={"300px"}>
                     <Text fontSize={"xl"}>Select Time period:</Text>
                     <Select defaultValue="7d" onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTimePeriod(e.target.value)}>
-                        {time.map((date, i) => (
+                        {time.map((date) => (
                             <option key={date}>{date}</option>
                         ))}
                     </Select>

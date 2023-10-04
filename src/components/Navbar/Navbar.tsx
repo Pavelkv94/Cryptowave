@@ -1,8 +1,7 @@
 import "./Navbar.scss";
 import logo from "../../images/CryptoWave1.svg";
-import { Center, HStack, Icon, Image, Select, Spacer, Text } from "@chakra-ui/react";
+import { Center, HStack, Image, Spacer, Text } from "@chakra-ui/react";
 import { TFunction } from "i18next";
-import { ImEarth } from "react-icons/im";
 import { Link, useLocation } from "react-router-dom";
 
 type NavbarPropsType = {
