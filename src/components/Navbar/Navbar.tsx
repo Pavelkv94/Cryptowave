@@ -19,8 +19,8 @@ const Navbar = ({ t }: NavbarPropsType) => {
                 <Image src={logo} height={50} />
                 <Spacer />
                 <HStack className="menu-wrapper" h={"100%"} w={"600px"}>
-                    <Link to={"/"}>
-                        <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/")}`}>
+                    <Link to={"/Cryptowave"}>
+                        <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/Cryptowave")}`}>
                             <Text fontSize="xl">{t("home")}</Text>
                         </Center>
                     </Link>
