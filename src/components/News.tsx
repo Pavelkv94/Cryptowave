@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useGetCryptosQuery } from "../../services/cryptoApi";
-import { useGetCryptosNewsQuery } from "../../services/cryptoNewsApi";
+import { useGetCryptosQuery } from "../services/cryptoApi";
+import { useGetCryptosNewsQuery } from "../services/cryptoNewsApi";
 import {
     Avatar,
     Box,
@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import { Link as LinkChakra } from "@chakra-ui/react";
-import { CoinType } from "../Homepage/Homepage";
+import { CoinType } from "./Homepage/Homepage";
 
 const demoImage = "https://www.bing.com/th?id=OVFT.mpzuVZnv8dwIMRfQGPbOPC&pid=News";
 

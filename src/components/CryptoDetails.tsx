@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import millify from "millify";
-import { useGetCryptoDetailsQuery, useGetCryptoHistoryQuery } from "../../services/cryptoApi";
+import { useGetCryptoDetailsQuery, useGetCryptoHistoryQuery } from "../services/cryptoApi";
 
 import {
     AiOutlineDollarCircle,
@@ -35,7 +35,7 @@ import {
     Tr,
     VStack
 } from "@chakra-ui/react";
-import LineChart from "../LineChart";
+import LineChart from "./LineChart";
 
 const CryptoDetails = () => {
     const { coinId } = useParams();
@@ -105,9 +105,9 @@ const CryptoDetails = () => {
 
             <SimpleGrid columns={3} spacing={10} maxW="1200px" margin={"20px 0"} display={"flex"} justifyContent={"space-between"} flexWrap={"wrap"}>
                 <Card padding="20px" minW="350px">
-                    <Text fontSize={"2xl"}> {cryptoDetails.name} Value Statistics</Text>
+                    <Text fontSize={"2xl"}> <b>{cryptoDetails.name}</b> Value Statistics</Text>
                     <Text fontSize={"sm"} color={"gray"}>
-                        An overview showing the stats of {cryptoDetails.name}
+                        An overview showing the stats of <b>{cryptoDetails.name}</b>
                     </Text>
                     <TableContainer>
                         <Table>

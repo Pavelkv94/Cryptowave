@@ -21,7 +21,7 @@ const LineChart = ({ coinHistory, currentPrice, coinName }: LinePropsType) => {
 
     for (let i = 0; i < coinHistory?.data?.history?.length; i += 1) {
         coinPrice.push(coinHistory?.data?.history[i].price);
-        coinTimestamp.push(new Date(coinHistory?.data?.history[i].timestamp * 1000).toLocaleDateString());
+        coinTimestamp.push(new Date(coinHistory?.data?.history[i].timestamp * 1000).toLocaleString());
     }
     const data = {
         labels: coinTimestamp.reverse(),
@@ -49,7 +49,7 @@ const LineChart = ({ coinHistory, currentPrice, coinName }: LinePropsType) => {
         <>
             <Center>
                 <Wrap>
-                    <Text>{coinName} Price Chart</Text>
+                    <Text><b>{coinName}</b> Price Chart</Text>
                     <Spacer />
                     <Stat>
                         {/* @ts-ignore */}
@@ -59,7 +59,7 @@ const LineChart = ({ coinHistory, currentPrice, coinName }: LinePropsType) => {
                     <Text color={coinHistory?.data?.change < 0 ? "#d33535" : "rgb(88, 189, 125)"}>{coinHistory?.data?.change}%</Text>
                     <Spacer />
                     <Text>
-                        Current {coinName} Price: <b>${currentPrice}</b>
+                        Current <b>{coinName}</b> Price: <b>${currentPrice}</b>
                     </Text>
                 </Wrap>
             </Center>

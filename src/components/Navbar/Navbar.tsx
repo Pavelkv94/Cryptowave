@@ -1,6 +1,6 @@
 import "./Navbar.scss";
 import logo from "../../images/CryptoWave1.svg";
-import { Avatar, Button, Center, Divider, HStack, Icon, Image, Select, Spacer, Text } from "@chakra-ui/react";
+import { Center, HStack, Icon, Image, Select, Spacer, Text } from "@chakra-ui/react";
 import { TFunction } from "i18next";
 import { ImEarth } from "react-icons/im";
 import { Link, useLocation } from "react-router-dom";
@@ -10,9 +10,9 @@ type NavbarPropsType = {
 };
 
 const Navbar = ({ t }: NavbarPropsType) => {
-  const {pathname} = useLocation()
+    const { pathname } = useLocation();
 
-  const isActiveButton = (path:string) => pathname === path ? "active" : "";
+    const isActiveButton = (path: string) => (pathname === path ? "active" : "");
 
     return (
         <div className="navbar-wrapper">
@@ -46,10 +46,14 @@ const Navbar = ({ t }: NavbarPropsType) => {
                 </HStack>
                 <Spacer />
                 <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                     <Icon as={ImEarth} color={"white"}/>
+                    <Icon as={ImEarth} color={"white"} />
                     <Select variant="" w={"80px"} defaultValue={"EN"} size={"sm"}>
-                        <option value="RU" color="black">RU</option>
-                        <option value="EN" color="black">EN</option>
+                        <option value="RU" color="black">
+                            RU
+                        </option>
+                        <option value="EN" color="black">
+                            EN
+                        </option>
                     </Select>
                     {/* <HStack w="46px">
                         <Divider orientation="vertical" h={"30px"} />

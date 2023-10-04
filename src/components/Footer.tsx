@@ -4,7 +4,7 @@ const Footer = () => {
     const year = new Date().getFullYear();
 
     return (
-        <VStack className="footer-wrapper" marginTop={"20px"}>
+        <VStack className="footer-wrapper" margin={"20px 0"}>
             <Divider />
             <Text fontSize="md" color={"gray"}>
                 ©{year} Pavel Kazlou - CryptoWave All Rights Reserved.

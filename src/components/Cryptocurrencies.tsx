@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useGetCryptosQuery } from "../../services/cryptoApi";
+import { useGetCryptosQuery } from "../services/cryptoApi";
 import { Box, HStack, Heading, Image, Input, LinkBox, LinkOverlay, Skeleton, Stack, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import millify from "millify";
-import SmallChart from "../Homepage/SmallChart";
-import banner from "../../images/currency-banner.png";
-import { CoinType } from "../Homepage/Homepage";
+import SmallChart from "./Homepage/SmallChart";
+import banner from "../images/Exchanges.png";
+
+import { CoinType } from "./Homepage/Homepage";
 
 const Cryptocurrencies = () => {
     const { data: cryptosList, isFetching } = useGetCryptosQuery(100);
@@ -20,7 +21,7 @@ const Cryptocurrencies = () => {
     return (
         <Box >
             <Box bg={"rgba(55, 114, 255, 0.1);"}>
-                <HStack h={"587px"} maxW={"1400px"} margin={"0 auto"} flexWrap={"wrap"} display={"flex"} justifyContent={"space-between"}>
+                <HStack h={"587px"} maxW={"1280px"} margin={"0 auto"} flexWrap={"wrap"} display={"flex"} justifyContent={"space-between"}>
                     <VStack alignItems={"flex-start"} spacing={"20px"} marginLeft="20px">
                         <Heading as="h1" size={"3xl"} maxW={"500px"} color={"#23262F"}>
                             Today's Cryptocurrency prices by Market Cap
@@ -58,6 +59,7 @@ const Cryptocurrencies = () => {
                         </Tr>
                     </Thead>
                     <Tbody>
+                        {cryptos.length === 0 && <Tr><Td>Not Found</Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td></Tr>}
                         {cryptos?.map((coin:CoinType, i:number) => (
                             <LinkBox as={Tr} key={i}>
                                 <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}<LinkOverlay href={`/crypto/${coin.uuid}`}/></Td>
