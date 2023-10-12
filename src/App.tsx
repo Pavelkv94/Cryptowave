@@ -36,7 +36,7 @@ function App() {
             <div className="main">
                 <div className="routes">
                     <Routes>
-                        <Route element={<Homepage />} path="/Cryptowave" />
+                        <Route element={<Homepage />} path="/" />
                         <Route element={<Cryptocurrencies />} path="/cryptocurrencies" />
                         <Route element={<News />} path="/news" />
                         <Route element={<CryptoDetails />} path="/crypto/:coinId" />
