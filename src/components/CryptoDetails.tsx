@@ -38,11 +38,11 @@ import {
 import LineChart from "./LineChart";
 
 const CryptoDetails = () => {
-    const { id } = useParams();
+    const { coinId } = useParams();
     const [timePeriod, setTimePeriod] = useState<React.ChangeEvent<HTMLSelectElement> | string>("7d");
 
-    const { data, isFetching } = useGetCryptoDetailsQuery(id);
-    const { data: coinHistory } = useGetCryptoHistoryQuery({ id, timePeriod });
+    const { data, isFetching } = useGetCryptoDetailsQuery(coinId);
+    const { data: coinHistory } = useGetCryptoHistoryQuery({ coinId, timePeriod });
 
     const cryptoDetails = data?.data?.coin;
 

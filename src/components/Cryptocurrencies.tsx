@@ -6,6 +6,7 @@ import SmallChart from "./Homepage/SmallChart";
 import banner from "../images/Exchanges.png";
 
 import { CoinType } from "./Homepage/Homepage";
+import { Link } from "react-router-dom";
 
 const Cryptocurrencies = () => {
     const { data: cryptosList, isFetching } = useGetCryptosQuery(100);
@@ -61,15 +62,17 @@ const Cryptocurrencies = () => {
                     <Tbody>
                         {cryptos?.length === 0 && <Tr><Td>Not Found</Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td></Tr>}
                         {cryptos?.map((coin:CoinType, i:number) => (
-                            <LinkBox as={Tr} key={i}>
-                                <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}<LinkOverlay href={`cryptocurrencies/${coin.uuid}`}/></Td>
+                            <Tr key={i}>
+                                <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}</Td>
                                 <Td>
+                                    <Link to={`/cryptocurrencies/${coin.uuid}`}>
                                     <HStack>
                                         <Image src={coin.iconUrl} w={"20px"} h={"20px"} />
                                         <Text>
                                             {coin.name} ({coin.symbol})
                                         </Text>
                                     </HStack>
+                                    </Link>
                                 </Td>
                                 <Td>${(+coin.price).toFixed(2)}</Td>
                                 <Td>${millify(+coin.marketCap)}</Td>
@@ -79,7 +82,7 @@ const Cryptocurrencies = () => {
                                 <Td>
                                     <SmallChart chartData={coin.sparkline} increase={+coin.change > 0} smallest />
                                 </Td>
-                            </LinkBox>
+                            </Tr>
                         ))}
                     </Tbody>
                 </Table>
