@@ -38,8 +38,8 @@ function App() {
                     <Routes>
                         <Route element={<Homepage />} path="/" />
                         <Route element={<Cryptocurrencies />} path="/cryptocurrencies" />
-                        <Route element={<News />} path="/news" />
                         <Route element={<CryptoDetails />} path="/cryptocurrencies/:id" />
+                        <Route element={<News />} path="/news" />
                         <Route element={<Exchanges />} path="/exchanges" />
                         <Route element={<div>empty</div>} path="*" />
                     </Routes>
