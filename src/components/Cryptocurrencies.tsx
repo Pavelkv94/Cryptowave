@@ -62,7 +62,7 @@ const Cryptocurrencies = () => {
                         {cryptos?.length === 0 && <Tr><Td>Not Found</Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td></Tr>}
                         {cryptos?.map((coin:CoinType, i:number) => (
                             <LinkBox as={Tr} key={i}>
-                                <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}<LinkOverlay href={`/cryptocurrencies/${coin.uuid}`}/></Td>
+                                <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}<LinkOverlay href={`/Cryptowave/cryptocurrencies/${coin.uuid}`}/></Td>
                                 <Td>
                                     <HStack>
                                         <Image src={coin.iconUrl} w={"20px"} h={"20px"} />

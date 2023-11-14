@@ -36,11 +36,11 @@ function App() {
             <div className="main">
                 <div className="routes">
                     <Routes>
-                        <Route element={<Homepage />} path="/" />
-                        <Route element={<Cryptocurrencies />} path="/cryptocurrencies" />
-                        <Route element={<News />} path="/news" />
-                        <Route element={<CryptoDetails />} path="/cryptocurrencies/:coinId" />
-                        <Route element={<Exchanges />} path="/exchanges" />
+                        <Route element={<Homepage />} path="/Cryptowave" />
+                        <Route element={<Cryptocurrencies />} path="/Cryptowave/cryptocurrencies" />
+                        <Route element={<News />} path="/Cryptowave/news" />
+                        <Route element={<CryptoDetails />} path="/Cryptowave/cryptocurrencies/:coinId" />
+                        <Route element={<Exchanges />} path="/Cryptowave/exchanges" />
                     </Routes>
                 </div>
 

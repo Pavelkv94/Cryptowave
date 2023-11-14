@@ -107,7 +107,7 @@ const Homepage = () => {
                         <HStack margin={"20px 0"}>
                             <Heading size={"xl"}>Top Cryptocurrencies in the world</Heading>
                             <Spacer />
-                            <Link to="/cryptocurrencies">
+                            <Link to="/Cryptowave/cryptocurrencies">
                                 <Text fontSize="2xl" color={"#0063d1"} fontWeight={"bold"}>
                                     Show More
                                 </Text>
