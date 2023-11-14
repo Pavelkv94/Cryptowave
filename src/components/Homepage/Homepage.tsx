@@ -143,7 +143,7 @@ const Homepage = () => {
                                         <SmallChart chartData={el.sparkline} increase={+el.change > 0} />
                                     </HStack>
 
-                                    <Button marginTop={"20px"}>Show info</Button>
+                                    <Link to={`/cryptocurrencies/${el.uuid}`}><Button marginTop={"20px"}>Show info</Button></Link>
                                 </Card>
                             ))}
                         </SimpleGrid>

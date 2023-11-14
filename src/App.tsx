@@ -44,7 +44,6 @@ function App() {
                         <Route element={<div>empty</div>} path="*" />
                     </Routes>
                 </div>
-
                 <Footer />
             </div>
         </div>
