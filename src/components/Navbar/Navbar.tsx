@@ -19,25 +19,25 @@ const Navbar = ({ t }: NavbarPropsType) => {
                 <Image src={logo} height={50} />
                 <Spacer />
                 <HStack className="menu-wrapper" h={"100%"} w={"600px"}>
-                    <Link to={"/Cryptowave/"}>
+                    <Link to={"/"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/")}`}>
                             <Text fontSize="xl">{t("home")}</Text>
                         </Center>
                     </Link>
                     <Spacer />
-                    <Link to={"/Cryptowave/cryptocurrencies"}>
+                    <Link to={"/cryptocurrencies"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/cryptocurrencies")}`}>
                             <Text fontSize="xl">{t("currencies")}</Text>
                         </Center>
                     </Link>
                     <Spacer />
-                    <Link to={"/Cryptowave/exchanges"}>
+                    <Link to={"/exchanges"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/exchanges")}`}>
                             <Text fontSize="xl">{t("exchanges")}</Text>
                         </Center>
                     </Link>
                     <Spacer />
-                    <Link to={"/Cryptowave/news"}>
+                    <Link to={"/news"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/news")}`}>
                             <Text fontSize="xl">{t("news")}</Text>
                         </Center>

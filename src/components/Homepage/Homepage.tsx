@@ -107,7 +107,7 @@ const Homepage = () => {
                         <HStack margin={"20px 0"}>
                             <Heading size={"xl"}>Top Cryptocurrencies in the world</Heading>
                             <Spacer />
-                            <Link to="/Cryptowave/cryptocurrencies">
+                            <Link to="/cryptocurrencies">
                                 <Text fontSize="2xl" color={"#0063d1"} fontWeight={"bold"}>
                                     Show More
                                 </Text>
@@ -143,7 +143,7 @@ const Homepage = () => {
                                         <SmallChart chartData={el.sparkline} increase={+el.change > 0} />
                                     </HStack>
 
-                                    <Link to={`/Cryptowave/cryptocurrencies/${el.uuid}`} style={{width: "100%"}}><Button marginTop={"20px"} width={"100%"}>Show info</Button></Link>
+                                    <Link to={`/cryptocurrencies/${el.uuid}`} style={{width: "100%"}}><Button marginTop={"20px"} width={"100%"}>Show info</Button></Link>
                                 </Card>
                             ))}
                         </SimpleGrid>
