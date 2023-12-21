@@ -65,7 +65,7 @@ const Cryptocurrencies = () => {
                             <Tr key={i}>
                                 <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}</Td>
                                 <Td>
-                                    <Link to={`/cryptocurrencies/${coin.uuid}`}>
+                                    <Link to={`/Cryptowave/cryptocurrencies/${coin.uuid}`}>
                                     <HStack>
                                         <Image src={coin.iconUrl} w={"20px"} h={"20px"} />
                                         <Text>
