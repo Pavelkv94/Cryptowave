@@ -25,7 +25,7 @@ export const cryptoNewsApi = createApi({
             // query: ({newsCategory, count}) => createRequest(`/news/search?q=${newsCategory}&safeSearch=Off&textFormat=Raw&freshness=Day&count=${count}&setLang=ru`)
 
             //!google
-            query: ({ newsCategory, count }) => createRequest(`/search?keyword=${newsCategory}&lr=ru-RU`)
+            query: ({ newsCategory }) => createRequest(`/search?keyword=${newsCategory}&lr=ru-RU`)
         })
     })
 });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGetCryptosQuery } from "../services/cryptoApi";
-import { Box, HStack, Heading, Image, Input, LinkBox, LinkOverlay, Skeleton, Stack, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { Box, HStack, Heading, Image, Input, Skeleton, Stack, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import millify from "millify";
 import SmallChart from "./Homepage/SmallChart";
 import banner from "../images/Exchanges.png";
