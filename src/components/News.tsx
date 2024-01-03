@@ -106,7 +106,7 @@ const News = ({ simplified }: NewsPropsType) => {
                 {news.map((news: NewsArticle, i: number) => (
                     <Card key={i} direction={{ base: "column" }} overflow="hidden" variant="outline" minW="350px" maxW="370px">
                         <HStack padding={"20px 20px 0 20px"}>
-                            <Image objectFit="contain" maxW={{ base: "40%", sm: "100%" }} src={news?.images?.thumbnail || demoImage} alt="Caffe Latte" />
+                            <Image objectFit="contain" maxW={{ base: "40%", sm: "100%" }} height={220} src={news?.images?.thumbnail || demoImage} alt="Caffe Latte" />
                             
                         </HStack>
                         <Heading padding={"20px 20px 0 20px"} size="md">{news.title}</Heading>
