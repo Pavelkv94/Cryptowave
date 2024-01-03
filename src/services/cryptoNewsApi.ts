@@ -5,7 +5,7 @@ const cryptoNewsApiHeaders = {
     // 'X-RapidAPI-Key': 'b540e79f6cmsh9e255c98280ab3fp1c7507jsn8bb659aeb302',
     // 'X-RapidAPI-Host': 'bing-news-search1.p.rapidapi.com'
     //!google
-    "X-RapidAPI-Key": "b540e79f6cmsh9e255c98280ab3fp1c7507jsn8bb659aeb302",
+    "X-RapidAPI-Key": "870846f4damsh5b815f400ba8f21p1835b9jsn52b5a8dc6a8f",
     "X-RapidAPI-Host": "google-news13.p.rapidapi.com"
 };
 
