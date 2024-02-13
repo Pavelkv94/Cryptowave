@@ -1,70 +1,81 @@
 import "./Navbar.scss";
 import logo from "../../images/CryptoWave1.svg";
-import { Center, HStack, Image, Spacer, Text } from "@chakra-ui/react";
-import { TFunction } from "i18next";
-import { Link, useLocation } from "react-router-dom";
+import { Avatar, Button, Card, Center, HStack, Image, Spacer, Text, useDisclosure } from "@chakra-ui/react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import AuthModal from "../AuthModal";
+import ChangeAvatarModal from "./ChangeAvatarModal";
+import { useGetUserQuery } from "../../services/authApi";
+import { useEffect, useState } from "react";
 
-type NavbarPropsType = {
-    t: TFunction;
-};
-
-const Navbar = ({ t }: NavbarPropsType) => {
+const Navbar = () => {
     const { pathname } = useLocation();
-
+    //@ts-ignore
+    const user = JSON.parse(localStorage.getItem("user"));
     const isActiveButton = (path: string) => (pathname === path ? "active" : "");
+
+    const { data: userData, isFetching, refetch: refetchUser } = user ? useGetUserQuery(user.id) : { data: null, isFetching: false, refetch: () => {} };
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const navigate = useNavigate();
+
+    const logout = () => {
+        navigate("/");
+
+        localStorage.removeItem("user");
+    };
 
     return (
         <div className="navbar-wrapper">
             <HStack spacing="24px" w="100%" h="100%" className="navbar-content">
-                <Image src={logo} height={50} />
+                <Image src={logo} height={50} className="logo" />
                 <Spacer />
                 <HStack className="menu-wrapper" h={"100%"} w={"600px"}>
                     <Link to={"/"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/")}`}>
-                            <Text fontSize="xl">{t("home")}</Text>
+                            <Text fontSize="xl">Home</Text>
                         </Center>
                     </Link>
                     <Spacer />
                     <Link to={"/cryptocurrencies"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/cryptocurrencies")}`}>
-                            <Text fontSize="xl">{t("currencies")}</Text>
+                            <Text fontSize="xl">Currencies</Text>
                         </Center>
                     </Link>
                     <Spacer />
                     <Link to={"/exchanges"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/exchanges")}`}>
-                            <Text fontSize="xl">{t("exchanges")}</Text>
+                            <Text fontSize="xl">Exchanges</Text>
                         </Center>
                     </Link>
                     <Spacer />
                     <Link to={"/news"}>
                         <Center w={"140px"} h={"60px"} color={"white"} className={`navbar-btn ${isActiveButton("/news")}`}>
-                            <Text fontSize="xl">{t("news")}</Text>
+                            <Text fontSize="xl">News</Text>
                         </Center>
                     </Link>
                 </HStack>
                 <Spacer />
-                <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                    {/* <Icon as={ImEarth} color={"white"} />
-                    <Select variant="" w={"80px"} defaultValue={"EN"} size={"sm"}>
-                        <option value="RU" color="black">
-                            RU
-                        </option>
-                        <option value="EN" color="black">
-                            EN
-                        </option>
-                    </Select>
-                    <HStack w="46px">
-                        <Divider orientation="vertical" h={"30px"} />
-                        <Icon as={BiSun} w={"26px"} h={"26px"} color="white" />
-                        <Divider orientation="vertical" h={"30px"} />
+                {user ? (
+                    <HStack className="menu-additional-wrapper" spacing={"14px"}>
+                        <Avatar src={userData?.avatar_url} cursor={"pointer"} onClick={onOpen}/>
+                        <NavLink to={"/portfolio"}>
+                            <Button colorScheme="messenger" variant="solid">
+                                Portfolio
+                            </Button>
+                        </NavLink>
+                        <Button colorScheme="teal" variant="solid" onClick={logout}>
+                            Logout
+                        </Button>
                     </HStack>
-                    <Button colorScheme="messenger" variant="solid">
-                        {t("wallet")}
-                    </Button>
-                    <Avatar /> */}
-                </HStack>
+                ) : (
+                    <HStack className="menu-additional-wrapper" spacing={"14px"}>
+                        <AuthModal mode="Login" />
+                        <AuthModal mode="Registration" />
+                    </HStack>
+                )}
             </HStack>
+            {isOpen && <ChangeAvatarModal userData={userData} isOpen={isOpen} onOpen={onOpen} onClose={onClose} refetchUser={refetchUser}/>}
         </div>
     );
 };

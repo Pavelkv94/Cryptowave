@@ -4,20 +4,27 @@ import { Box, HStack, Heading, Image, Input, Skeleton, Stack, Table, TableContai
 import millify from "millify";
 import SmallChart from "./Homepage/SmallChart";
 import banner from "../images/Exchanges.png";
-
 import { CoinType } from "./Homepage/Homepage";
 import { Link } from "react-router-dom";
+import { StarIcon } from "@chakra-ui/icons";
+import { useFavoritesMutation, useGetFavoritesQuery } from "../services/favoritesApi";
 
 const Cryptocurrencies = () => {
     const { data: cryptosList, isFetching } = useGetCryptosQuery(100);
+
+    
     const [cryptos, setCryptos] = useState(cryptosList?.data?.coins);
     const [searchTerm, setSearchTerm] = useState("");
-
+    
     useEffect(() => {
         setCryptos(cryptosList?.data?.coins);
         const filteredData = cryptosList?.data?.coins.filter((coin: CoinType) => coin.name.toLowerCase().includes(searchTerm.toLowerCase()));
         setCryptos(filteredData);
     }, [searchTerm, cryptosList]);
+
+    const checkFavorite = (coin:string) => {
+        register(coin)
+    };
 
     return (
         <Box >

@@ -83,7 +83,7 @@ const Homepage = () => {
                         <HStack flexWrap={"wrap"} display={"flex"}>
                             <Stat minW="200px">
                                 <StatLabel>Total Cryptocurrencies</StatLabel>
-                                <StatNumber>{millify(globalStats.total)}</StatNumber>
+                                <StatNumber>{millify(globalStats?.total)}</StatNumber>
                             </Stat>
                             <Stat minW="200px">
                                 <StatLabel>Total Exchanges</StatLabel>

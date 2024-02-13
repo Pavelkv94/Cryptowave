@@ -5,13 +5,12 @@
     // position: fixed;
 
     .navbar-content {
-
-        img {
+        .logo {
             height: 50px;
             margin-left: 100px;
         }
 
-        .menu-additional-wrapper{
+        .menu-additional-wrapper {
             margin-right: 100px;
         }
 
@@ -22,8 +21,8 @@
 
             &.active {
                 background-color: rgba(255, 255, 255, 0.336);
-
             }
         }
     }
+
 }

@@ -2,3 +2,9 @@ body {
     padding: 0;
     margin: 0;
 }
+
+.favorite {
+    border: 1px solid red;
+
+    fill: green;
+}

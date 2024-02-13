@@ -1,28 +1,11 @@
 import React, { useState } from "react";
 import { useGetCryptosQuery } from "../services/cryptoApi";
 import { useGetCryptosNewsQuery } from "../services/cryptoNewsApi";
-import {
-    Avatar,
-    Box,
-    Card,
-    CardBody,
-    CardFooter,
-    Center,
-    HStack,
-    Heading,
-    Image,
-    Select,
-    SimpleGrid,
-    Skeleton,
-    Spacer,
-    Stack,
-    Text,
-    VStack
-} from "@chakra-ui/react";
+import { Box, Card, CardBody, CardFooter, Center, HStack, Heading, Image, Select, SimpleGrid, Skeleton, Spacer, Stack, Text, VStack } from "@chakra-ui/react";
 import { Link as LinkChakra } from "@chakra-ui/react";
 import { CoinType } from "./Homepage/Homepage";
 
-const demoImage = "https://www.bing.com/th?id=OVFT.mpzuVZnv8dwIMRfQGPbOPC&pid=News";
+const demoImage = "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png";
 
 type NewsPropsType = {
     simplified?: boolean;
@@ -35,23 +18,28 @@ interface ImageObject {
 
 interface NewsArticle {
     title: string;
-    snippet: string;
-    publisher: string;
+    description: string;
+    author: string;
     timestamp: string;
-    newsUrl: string;
-    images: ImageObject;
+    url: string;
+    urlToImage: ImageObject;
+    source: {
+        name: string;
+    };
 }
 
 const News = ({ simplified }: NewsPropsType) => {
     const [newsCategory, setNewsCategory] = useState<React.ChangeEvent<HTMLSelectElement> | string>("Cryptocurrency");
     const { data } = useGetCryptosQuery(100);
-    const {data: cryptoNews} = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
+    // const { data: cryptoNews } = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
 
-    const news = simplified ? cryptoNews?.items.slice(0, 12) : cryptoNews?.items;
+    const news = []//simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
 
     const formatDate = (timestamp: number) => {
+        const oldDate = new Date(timestamp);
         const now = Date.now();
-        const differenceInSeconds = Math.floor((now - timestamp) / 1000);
+        //@ts-ignore
+        const differenceInSeconds = Math.floor((now - oldDate) / 1000);
 
         const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
@@ -106,28 +94,32 @@ const News = ({ simplified }: NewsPropsType) => {
                 {news.map((news: NewsArticle, i: number) => (
                     <Card key={i} direction={{ base: "column" }} overflow="hidden" variant="outline" minW="350px" maxW="370px">
                         <HStack padding={"20px 20px 0 20px"}>
-                            <Image objectFit="contain" maxW={{ base: "40%", sm: "100%" }} height={220} src={news?.images?.thumbnail || demoImage} alt="Caffe Latte" />
-                            
+                            {/*@ts-ignore */}
+                            <Image objectFit="contain" maxW={{ base: "40%", sm: "100%" }} height={220} src={news?.urlToImage || demoImage} alt="Caffe Latte" />
                         </HStack>
-                        <Heading padding={"20px 20px 0 20px"} size="md">{news.title}</Heading>
+                        <Heading padding={"20px 20px 0 20px"} size="md">
+                            {news.title}
+                        </Heading>
                         <CardBody paddingBottom={"0"}>
-                            <Text py="2">{news.snippet.length > 100 ? `${news.snippet.substring(0, 200)}...` : news.snippet}</Text>
+                            <Text py="2">{news.description?.length > 100 ? `${news.description.substring(0, 200)}...` : news.description}</Text>
                         </CardBody>
 
                         <CardFooter>
                             <HStack w="100%">
                                 <VStack alignItems={"flex-start"}>
-                                    <HStack>
-                                        <Avatar src={demoImage} />
-                                        <Text className="provider-name">{news.publisher}</Text>
-                                    </HStack>
+                                    <VStack alignItems={"flex-start"}>
+                                        <Text className="provider-name">
+                                            <b>{news.source.name}</b>
+                                        </Text>
+                                        <Text className="provider-name">{news.author}</Text>
+                                    </VStack>
                                     <Text fontSize={"sm"} color={"gray"}>
                                         {/* @ts-ignore */}
-                                        {formatDate(news.timestamp)}
+                                        {formatDate(news.publishedAt)}
                                     </Text>
                                 </VStack>
                                 <Spacer />
-                                <LinkChakra href={news.newsUrl} isExternal color={"#0063d1"}>
+                                <LinkChakra href={news.url} isExternal color={"#0063d1"}>
                                     Read more
                                 </LinkChakra>
                             </HStack>
