@@ -5,17 +5,17 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import AuthModal from "../AuthModal";
 import ChangeAvatarModal from "./ChangeAvatarModal";
 import { useGetUserQuery } from "../../services/authApi";
-import { useEffect, useState } from "react";
 
 const Navbar = () => {
     const { pathname } = useLocation();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     //@ts-ignore
     const user = JSON.parse(localStorage.getItem("user"));
     const isActiveButton = (path: string) => (pathname === path ? "active" : "");
 
     const { data: userData, isFetching, refetch: refetchUser } = user ? useGetUserQuery(user.id) : { data: null, isFetching: false, refetch: () => {} };
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const navigate = useNavigate();
 

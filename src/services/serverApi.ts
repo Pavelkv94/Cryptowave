@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
+//@ts-ignore
 const user = JSON.parse(localStorage.getItem("user"));
 const token = user?.token;
 
@@ -29,8 +29,17 @@ export const serverApi = createApi({
         }),
         deleteHistory: builder.mutation({
             query: (transaction_id) => deleteRequest(`/transactions/${transaction_id}`)
+        }),
+        addWatchitem: builder.mutation({
+            query: (payload) => postRequest("/watchlist ", "POST", payload)
+        }),
+        getWatchList: builder.query({
+            query: () => getRequest(`/user/${user?.id}/watchlist`)
+        }),
+        deleteWatchItem: builder.mutation({
+            query: (watch_item_id) => deleteRequest(`/watchlist/${watch_item_id}`)
         })
     }),
 });
 
-export const { useTransactionMutation, useGetHistoryQuery, useDeleteHistoryMutation } = serverApi;
+export const { useTransactionMutation, useGetHistoryQuery, useDeleteHistoryMutation, useAddWatchitemMutation, useDeleteWatchItemMutation, useGetWatchListQuery } = serverApi;

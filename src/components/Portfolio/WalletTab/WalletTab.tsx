@@ -32,10 +32,10 @@ const WalletTab = () => {
     const refreshData = () => {
         refetchCryptos();
     };
-    let totalBalance = 0;
+    let totalBalance = 0;   
     let totalProfit = 0;
 
-    history?.forEach((transaction) => {
+    history?.forEach((transaction: any) => {
         const coin = cryptosList?.data?.coins.find((el: any) => el.name === transaction.coin);
         if (transaction.operation === "buy") {
             totalBalance += parseFloat(transaction.quantity) * parseFloat(coin?.price);
@@ -57,7 +57,7 @@ const WalletTab = () => {
                         <Text size="md">My balance</Text>
                     </CardHeader>
                     <CardBody paddingTop={0}>
-                        <Heading size="sm" color={totalProfit > 0 ? "green.500" : "red.500"}>{totalProfit > 0 ? "+" : "-"}${Math.abs(totalProfit.toFixed(2))}</Heading>
+                        <Heading size="sm" color={totalProfit > 0 ? "green.500" : totalProfit < 0 ? "red.500" : "gray"}>{totalProfit > 0 ? "+" : totalProfit < 0 ?  "-" : ""}${Math.abs(+totalProfit.toFixed(2))}</Heading>
                         <Heading size="md">${totalBalance.toFixed(2)}</Heading>
                     </CardBody>
                 </Card>

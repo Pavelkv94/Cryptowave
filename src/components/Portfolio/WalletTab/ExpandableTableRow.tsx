@@ -39,7 +39,7 @@ const ExpandableTableRow = ({ coin, history, refetchHistory }: any) => {
 
     const averagePricePerCoin = totalPrice / totalCoinsBought;
 
-    const profit = ((+coin?.price*holdings) - (averagePricePerCoin*holdings)).toFixed(2);
+    const profit: number = ((+coin?.price*holdings) - (averagePricePerCoin*holdings)).toFixed(2);
    
     const handleToggle = () => {
         setIsOpen(!isOpen);
@@ -74,7 +74,7 @@ const ExpandableTableRow = ({ coin, history, refetchHistory }: any) => {
                     </div>
                 </Td>
                 <Td>${averagePricePerCoin.toFixed(2)}</Td>
-                <Td color={profit > 0 ? "green" : "red"}>{profit > 0 ? "+" : "-"}${Math.abs(profit)}</Td>
+                <Td color={profit > 0 ? "green" : profit < 0 ? "red" : "gray"}>{profit > 0 ? "+" : profit < 0 ? "-" : ""}${Math.abs(profit)}</Td>
                 <Td>
                     <Button onClick={handleToggle} size={"sm"}>
                         Transactions

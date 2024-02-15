@@ -82,7 +82,8 @@ const TransactionModal = ({ coins }: any) => {
             note: transactionBody.note,
             total: (+transactionBody.quantity * +transactionBody.perCoin).toFixed(2),
             operation: operation,
-            date: transactionBody.date
+            date: transactionBody.date,
+            tg_nickname: JSON.parse(user)?.tg_nickname 
         }).then(() => {
             handleClose();
             refetchHistory();            

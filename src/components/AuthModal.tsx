@@ -14,7 +14,7 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useGetTestQuery, useLoginMutation, useRegistrationMutation } from "../services/authApi";
+import { useLoginMutation, useRegistrationMutation } from "../services/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../Slices/userSlice";
 
@@ -25,6 +25,7 @@ type AuthModalPropsType = {
 type UserDataType = {
     username: string;
     password: string;
+    tg_nickname?: string;
 };
 
 const AuthModal = ({ mode }: AuthModalPropsType) => {
@@ -34,7 +35,8 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
 
     const initData: UserDataType = {
         username: "",
-        password: ""
+        password: "",
+        tg_nickname: ""
     };
 
     const [data, setData] = useState<UserDataType>(initData);
@@ -56,13 +58,13 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
     const handleLogin = (payload: UserDataType) => {
         login(payload).then((res) => {
             dispatch(setUser(res));
-            
+
             closeModal();
         });
     };
 
     useEffect(() => {
-        loginData && localStorage.setItem("user", JSON.stringify(loginData))
+        loginData && localStorage.setItem("user", JSON.stringify(loginData));
     }, [loginData]);
 
     useEffect(() => {
@@ -93,7 +95,7 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
     }, [registrationError, registrationSuccess, loginError]);
 
     const handleSubmit = () => {
-        mode === "Login" ? handleLogin(data) : handleRegistration(data);
+        mode === "Login" ? handleLogin({ username: data.username, password: data.password }) : handleRegistration(data);
     };
 
     return (
@@ -114,6 +116,14 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
                             placeholder="Enter login"
                             marginBottom={5}
                         />
+                        {mode === "Registration" && (
+                            <Input
+                                value={data.tg_nickname}
+                                onChange={(e) => setData({ ...data, tg_nickname: e.target.value })}
+                                placeholder="Enter Telegram Nickname"
+                                marginBottom={5}
+                            />
+                        )}
                         <InputGroup size="md">
                             <Input
                                 pr="4.5rem"
@@ -134,7 +144,11 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
                         <Button variant="ghost" mr={3} onClick={closeModal}>
                             Close
                         </Button>
-                        <Button colorScheme="blue" isDisabled={data.username.trim() === "" || data.password.trim() === ""} onClick={handleSubmit}>
+                        <Button
+                            colorScheme="blue"
+                            isDisabled={data.username.trim() === "" || data.password.trim() === ""}
+                            onClick={handleSubmit}
+                        >
                             {mode}
                         </Button>
                     </ModalFooter>
