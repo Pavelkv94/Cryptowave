@@ -5,10 +5,11 @@ const token = user?.token;
 
 const serverApiHeaders = {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
+    "Authorization": `Bearer ${token}`,
+    'ngrok-skip-browser-warning': 'true' 
 };
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = import.meta.env.VITE_SERVER_URL;
 
 const getRequest = (url: string) => ({ url, headers: serverApiHeaders });
 const deleteRequest = (url: string) => ({ url, method: "DELETE", headers: serverApiHeaders });

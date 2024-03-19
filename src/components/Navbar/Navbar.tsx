@@ -1,10 +1,10 @@
 import "./Navbar.scss";
 import logo from "../../images/CryptoWave1.svg";
-import { Avatar, Button, Card, Center, HStack, Image, Spacer, Text, useDisclosure } from "@chakra-ui/react";
+import { Avatar, Button, Center, HStack, Image, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import AuthModal from "../AuthModal";
 import ChangeAvatarModal from "./ChangeAvatarModal";
-import { useGetUserQuery } from "../../services/authApi";
+import { useGetUserQuery, useLoginMutation } from "../../services/authApi";
 
 const Navbar = () => {
     const { pathname } = useLocation();
@@ -15,14 +15,15 @@ const Navbar = () => {
     const isActiveButton = (path: string) => (pathname === path ? "active" : "");
 
     const { data: userData, isFetching, refetch: refetchUser } = user ? useGetUserQuery(user.id) : { data: null, isFetching: false, refetch: () => {} };
+    const [login, { error: loginError }] = useLoginMutation();
 
 
     const navigate = useNavigate();
 
     const logout = () => {
         navigate("/");
-
         localStorage.removeItem("user");
+        location.reload()
     };
 
     return (
@@ -70,7 +71,7 @@ const Navbar = () => {
                     </HStack>
                 ) : (
                     <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                        <AuthModal mode="Login" />
+                        <AuthModal mode="Login" login={login} loginError={loginError}/>
                         <AuthModal mode="Registration" />
                     </HStack>
                 )}

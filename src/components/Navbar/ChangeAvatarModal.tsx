@@ -18,10 +18,10 @@ import {
 import { useState } from "react";
 import { useUpdateAvatarMutation } from "../../services/authApi";
 
-const ChangeAvatarModal = ({ isOpen, onOpen, onClose, userData, refetchUser }: any) => {
+const ChangeAvatarModal = ({ isOpen, onClose, userData, refetchUser }: any) => {
     const [currentAvatar, setCurrentAvatar] = useState(userData?.avatar_url);
 
-    const [update, { data: registrationData, error: registrationError, isSuccess: registrationSuccess }] = useUpdateAvatarMutation();
+    const [update] = useUpdateAvatarMutation();
 
     const avatars = [
         "https://s3.coinmarketcap.com/static/img/portraits/61b9ab0bf5f0fa566713befc.png",

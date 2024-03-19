@@ -14,12 +14,14 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useLoginMutation, useRegistrationMutation } from "../services/authApi";
+import { useRegistrationMutation } from "../services/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../Slices/userSlice";
 
 type AuthModalPropsType = {
     mode: "Login" | "Registration";
+    login?: any
+    loginError?: boolean
 };
 
 type UserDataType = {
@@ -28,7 +30,7 @@ type UserDataType = {
     tg_nickname?: string;
 };
 
-const AuthModal = ({ mode }: AuthModalPropsType) => {
+const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
     const dispatch = useDispatch();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
@@ -42,7 +44,6 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
     const [data, setData] = useState<UserDataType>(initData);
     const [show, setShow] = useState(false);
     const [register, { data: registrationData, error: registrationError, isSuccess: registrationSuccess }] = useRegistrationMutation();
-    const [login, { data: loginData, error: loginError, isSuccess: loginSuccess }] = useLoginMutation();
 
     const handleClick = () => setShow(!show);
 
@@ -56,16 +57,13 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
     };
 
     const handleLogin = (payload: UserDataType) => {
-        login(payload).then((res) => {
+        login(payload).then((res: any) => {
             dispatch(setUser(res));
-
+            localStorage.setItem("user", JSON.stringify(res.data))
             closeModal();
+            location.reload()
         });
     };
-
-    useEffect(() => {
-        loginData && localStorage.setItem("user", JSON.stringify(loginData));
-    }, [loginData]);
 
     useEffect(() => {
         registrationError &&

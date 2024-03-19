@@ -24,6 +24,19 @@ import { useGetHistoryQuery } from "../../../services/serverApi";
 import ExpandableTableRow from "./ExpandableTableRow";
 import { RepeatClockIcon } from "@chakra-ui/icons";
 
+type HistoryItemType = {
+    _id: string;
+    coin: string
+    quantity: string
+    price_per_coin: string
+    note: string
+    total: string
+    operation: string
+    user: string
+    date: string
+    tg_nickname: string
+    __v: number
+};
 const WalletTab = () => {
     const { data: cryptosList, isFetching, refetch: refetchCryptos } = useGetCryptosQuery(100);
     //@ts-ignore
@@ -32,22 +45,24 @@ const WalletTab = () => {
     const refreshData = () => {
         refetchCryptos();
     };
-    let totalBalance = 0;   
+    let totalBalance = 0;
     let totalProfit = 0;
 
-    history?.forEach((transaction: any) => {
+    history?.forEach((transaction: HistoryItemType) => {
         const coin = cryptosList?.data?.coins.find((el: any) => el.name === transaction.coin);
         if (transaction.operation === "buy") {
             totalBalance += parseFloat(transaction.quantity) * parseFloat(coin?.price);
-            totalProfit += (parseFloat(transaction.quantity) * parseFloat(coin?.price) - (parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin)))
+            totalProfit +=
+                parseFloat(transaction.quantity) * parseFloat(coin?.price) - parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin);
         }
         if (transaction.operation === "sell") {
             totalBalance -= parseFloat(transaction.quantity) * parseFloat(coin?.price);
-            totalProfit -= (parseFloat(transaction.quantity) * parseFloat(coin?.price) - (parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin)))
+            totalProfit -=
+                parseFloat(transaction.quantity) * parseFloat(coin?.price) - parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin);
         }
     });
 
-    const uniqueCoinsInHistory = [...new Map(history?.map((item: any) => [item["coin"], item])).values()];
+    const uniqueCoinsInHistory = [...new Map(history?.map((item: HistoryItemType) => [item["coin"], item])).values()];
 
     return (
         <TabPanel>
@@ -57,7 +72,9 @@ const WalletTab = () => {
                         <Text size="md">My balance</Text>
                     </CardHeader>
                     <CardBody paddingTop={0}>
-                        <Heading size="sm" color={totalProfit > 0 ? "green.500" : totalProfit < 0 ? "red.500" : "gray"}>{totalProfit > 0 ? "+" : totalProfit < 0 ?  "-" : ""}${Math.abs(+totalProfit.toFixed(2))}</Heading>
+                        <Heading size="sm" color={totalProfit > 0 ? "green.500" : totalProfit < 0 ? "red.500" : "gray"}>
+                            {totalProfit > 0 ? "+" : totalProfit < 0 ? "-" : ""}${Math.abs(+totalProfit.toFixed(2))}
+                        </Heading>
                         <Heading size="md">${totalBalance.toFixed(2)}</Heading>
                     </CardBody>
                 </Card>
