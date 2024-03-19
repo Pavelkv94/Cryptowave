@@ -14,7 +14,8 @@ const Navbar = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const isActiveButton = (path: string) => (pathname === path ? "active" : "");
 
-    const { data: userData, isFetching, refetch: refetchUser } = user ? useGetUserQuery(user.id) : { data: null, isFetching: false, refetch: () => {} };
+    //@ts-ignore
+    const { data: userData, refetch: refetchUser } = user ? useGetUserQuery(user.id) : { data: null, isFetching: false, refetch: () => {} };
     const [login, { error: loginError }] = useLoginMutation();
 
 

@@ -1,8 +1,6 @@
 import {
-    Box,
     Button,
     HStack,
-    Image,
     Input,
     Modal,
     ModalBody,
@@ -28,9 +26,9 @@ import { formatDateToISOString } from "../../../utils/fotmerDate";
 
 const TransactionModal = ({ coins }: any) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const user = localStorage.getItem("user");
+    const user:any = localStorage.getItem("user");
 
-    const [register, { data: registrationData, error: registrationError, isSuccess: registrationSuccess }] = useTransactionMutation();
+    const [register] = useTransactionMutation();
     const { refetch: refetchHistory } = useGetHistoryQuery("");
 
     const currentDate = new Date();
@@ -43,9 +41,9 @@ const TransactionModal = ({ coins }: any) => {
         date: formatDateToISOString(currentDate)
     };
 
-    const [transactionBody, setTransactionBody] = useState(initTransactionBody);
+    const [transactionBody, setTransactionBody] = useState<any>(initTransactionBody);
 
-    const handleInput = (field: string) => (e) => setTransactionBody({ ...transactionBody, [field]: e.target.value });
+    const handleInput = (field: string) => (e:any) => setTransactionBody({ ...transactionBody, [field]: e.target.value });
     const format = (val: number) => `$` + val;
     const parse = (val: string) => val.replace(/^\$/, "");
 
@@ -59,7 +57,7 @@ const TransactionModal = ({ coins }: any) => {
     }, [coins]);
 
     useEffect(() => {
-        const selectedCoin = coins?.find((el) => el.name === transactionBody.selectedCoin);
+        const selectedCoin = coins?.find((el:any) => el.name === transactionBody.selectedCoin);
         setTransactionBody({ ...transactionBody, perCoin: (+selectedCoin?.price).toFixed(2).toString() });
     }, [transactionBody.selectedCoin]);
 

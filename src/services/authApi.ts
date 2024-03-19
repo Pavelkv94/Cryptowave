@@ -12,6 +12,7 @@ const token = JSON.parse(user)?.token;
 //@ts-ignore
 const user_id = JSON.parse(user)?.id;
 
+    //@ts-ignore
 const getRequest = (url: string) => ({ url, headers: authApiHeaders });
 const getAuthorizedRequest = (url: string) => ({ url, headers: {...authApiHeaders, "Authorization": `Bearer ${token}`} });
 

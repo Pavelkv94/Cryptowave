@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useGetCryptosQuery } from "../services/cryptoApi";
+//@ts-ignore
 import { useGetCryptosNewsQuery } from "../services/cryptoNewsApi";
 import { Box, Card, CardBody, CardFooter, Center, HStack, Heading, Image, Select, SimpleGrid, Skeleton, Spacer, Stack, Text, VStack } from "@chakra-ui/react";
 import { Link as LinkChakra } from "@chakra-ui/react";
@@ -29,11 +30,12 @@ interface NewsArticle {
 }
 
 const News = ({ simplified }: NewsPropsType) => {
+        //@ts-ignore
     const [newsCategory, setNewsCategory] = useState<React.ChangeEvent<HTMLSelectElement> | string>("Cryptocurrency");
     const { data } = useGetCryptosQuery(100);
     // const { data: cryptoNews } = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
-
-    const news = []//simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
+    //@ts-ignore
+    const news:any = []//simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
 
     const formatDate = (timestamp: number) => {
         const oldDate = new Date(timestamp);

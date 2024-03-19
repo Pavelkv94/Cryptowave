@@ -21,7 +21,7 @@ import { setUser } from "../Slices/userSlice";
 type AuthModalPropsType = {
     mode: "Login" | "Registration";
     login?: any
-    loginError?: boolean
+    loginError?: any
 };
 
 type UserDataType = {
@@ -43,7 +43,7 @@ const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
 
     const [data, setData] = useState<UserDataType>(initData);
     const [show, setShow] = useState(false);
-    const [register, { data: registrationData, error: registrationError, isSuccess: registrationSuccess }] = useRegistrationMutation();
+    const [register, { error: registrationError, isSuccess: registrationSuccess }] = useRegistrationMutation();
 
     const handleClick = () => setShow(!show);
 

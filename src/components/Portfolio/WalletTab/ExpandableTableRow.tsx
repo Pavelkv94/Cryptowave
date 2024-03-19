@@ -6,9 +6,9 @@ import { useDeleteHistoryMutation } from "../../../services/serverApi";
 
 const ExpandableTableRow = ({ coin, history, refetchHistory }: any) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [deleteHistory, {isLoading, isError}] = useDeleteHistoryMutation();
+    const [deleteHistory] = useDeleteHistoryMutation();
 
-    const coinHistory = history.filter((el) => el.coin === coin?.name);
+    const coinHistory = history.filter((el:any) => el.coin === coin?.name);
 
     const handleDelete = (transactionId:string) => {
         deleteHistory(transactionId).then(() => refetchHistory())
@@ -16,7 +16,7 @@ const ExpandableTableRow = ({ coin, history, refetchHistory }: any) => {
 
     let holdings = 0;
 
-    coinHistory.forEach((transaction) => {
+    coinHistory.forEach((transaction:any) => {
         if (!holdings) {
             holdings = 0;
         }
@@ -30,7 +30,7 @@ const ExpandableTableRow = ({ coin, history, refetchHistory }: any) => {
     let totalPrice = 0;
     let totalCoinsBought = 0;
 
-    coinHistory.forEach((transaction) => {
+    coinHistory.forEach((transaction:any) => {
         if (transaction.operation === "buy") {
             totalPrice += (parseFloat(transaction.price_per_coin))*parseFloat(transaction.quantity);
             totalCoinsBought += parseFloat(transaction.quantity);
@@ -39,7 +39,7 @@ const ExpandableTableRow = ({ coin, history, refetchHistory }: any) => {
 
     const averagePricePerCoin = totalPrice / totalCoinsBought;
 
-    const profit: number = ((+coin?.price*holdings) - (averagePricePerCoin*holdings)).toFixed(2);
+    const profit: any = ((+coin?.price*holdings) - (averagePricePerCoin*holdings)).toFixed(2);
    
     const handleToggle = () => {
         setIsOpen(!isOpen);
@@ -84,7 +84,7 @@ const ExpandableTableRow = ({ coin, history, refetchHistory }: any) => {
             {isOpen && (
                 <Tr>
                     <Td colSpan={8} >
-                    {coinHistory.map((el, i) => <Box key={i} p="2" backgroundColor={el.operation === "sell" ? "red.50" : "green.50"} borderBottom={"1px solid #9bcaff"} display={"flex"} justifyContent={"space-between"}>
+                    {coinHistory.map((el:any, i:number) => <Box key={i} p="2" backgroundColor={el.operation === "sell" ? "red.50" : "green.50"} borderBottom={"1px solid #9bcaff"} display={"flex"} justifyContent={"space-between"}>
                         <VStack align={"start"}>
                         <Text fontWeight={"bold"}>{el.operation.toUpperCase()}</Text>
                         <Text color={"gray"} fontSize={12}>{el.date.replace("T", ", ")}</Text>

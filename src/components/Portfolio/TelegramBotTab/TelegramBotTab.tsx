@@ -61,7 +61,7 @@ const TelegramBotTab = () => {
 
     const [changing, setChanging] = useState(20);
     const [selectedCoinName, setSelectedCoinName] = useState("");
-    const [selectedCoin, setSelectedCoin] = useState(null);
+    const [selectedCoin, setSelectedCoin] = useState<any>(null);
 
     useEffect(() => {
         isSuccess && setSelectedCoinName(cryptosList?.data?.coins[0].name);
@@ -88,7 +88,7 @@ const TelegramBotTab = () => {
     ));
 
     const addWatchListItem = () => {
-      if(watchList.find(el => el.name === selectedCoinName)) {
+      if(watchList.find((el:any) => el.name === selectedCoinName)) {
         toast({
           title: "Failed.",
           description: "This cryptocurrency is already in the Watch list.",
@@ -115,7 +115,7 @@ const TelegramBotTab = () => {
               });
               refetchWatchList();
           })
-          .catch((e) =>
+          .catch(() =>
               toast({
                   title: "Error.",
                   description: "An error occurred.",
@@ -222,8 +222,8 @@ const TelegramBotTab = () => {
                                     <Td></Td>
                                 </Tr>
                             ) : (
-                                watchList?.map((el, i: number) => {
-                                    const coin = cryptosList?.data?.coins?.find((item) => item.name === el.name);
+                                watchList?.map((el:any, i: number) => {
+                                    const coin = cryptosList?.data?.coins?.find((item:any) => item.name === el.name);
                                     return (
                                         <Tr key={i}>
                                             <Td>
