@@ -58,10 +58,20 @@ const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
 
     const handleLogin = (payload: UserDataType) => {
         login(payload).then((res: any) => {
-            dispatch(setUser(res));
-            localStorage.setItem("user", JSON.stringify(res.data))
-            closeModal();
-            location.reload()
+            if(res.error) {
+                closeModal();
+                console.log("error")
+
+            } else {
+                dispatch(setUser(res));
+                localStorage.setItem("user", JSON.stringify(res.data))
+                closeModal();
+                location.reload()
+                console.log(res)
+                console.log("good")
+
+            }
+           
         });
     };
 
