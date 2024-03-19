@@ -33,9 +33,9 @@ const News = ({ simplified }: NewsPropsType) => {
         //@ts-ignore
     const [newsCategory, setNewsCategory] = useState<React.ChangeEvent<HTMLSelectElement> | string>("Cryptocurrency");
     const { data } = useGetCryptosQuery(100);
-    // const { data: cryptoNews } = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
+    const { data: cryptoNews } = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
     //@ts-ignore
-    const news:any = []//simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
+    const news:any = simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
 
     const formatDate = (timestamp: number) => {
         const oldDate = new Date(timestamp);
