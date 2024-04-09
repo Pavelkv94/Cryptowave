@@ -1,4 +1,4 @@
-CryptowaveApp - https://main--lambent-cobbler-a6f0c6.netlify.app/
+CryptowaveApp - https://cryptowave-pavel-kazlou.netlify.app/
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

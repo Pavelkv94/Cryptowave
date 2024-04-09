@@ -15,8 +15,8 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useRegistrationMutation } from "../services/authApi";
-import { useDispatch } from "react-redux";
 import { setUser } from "../Slices/userSlice";
+import { useDispatch } from "react-redux";
 
 type AuthModalPropsType = {
     mode: "Login" | "Registration";
