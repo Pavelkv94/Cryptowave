@@ -6,14 +6,10 @@ const authApiHeaders = {
 
 const baseUrl = import.meta.env.VITE_SERVER_URL;
 
-const user = localStorage.getItem("user");
-//@ts-ignore
+const user:any = localStorage.getItem("user");
 const token = JSON.parse(user)?.token;
-//@ts-ignore
 const user_id = JSON.parse(user)?.id;
 
-    //@ts-ignore
-const getRequest = (url: string) => ({ url, headers: authApiHeaders });
 const getAuthorizedRequest = (url: string) => ({ url, headers: {...authApiHeaders, "Authorization": `Bearer ${token}`} });
 
 const postRequest = (url: string, method: string, payload: object) => ({ url, method, body: payload, headers: authApiHeaders });

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useGetCryptosQuery } from "../services/cryptoApi";
-//@ts-ignore
 import { useGetCryptosNewsQuery } from "../services/cryptoNewsApi";
 import { Box, Card, CardBody, CardFooter, Center, HStack, Heading, Image, Select, SimpleGrid, Skeleton, Spacer, Stack, Text, VStack } from "@chakra-ui/react";
 import { Link as LinkChakra } from "@chakra-ui/react";
@@ -19,7 +18,7 @@ interface ImageObject {
 
 interface NewsArticle {
     title: string;
-    description: string;
+    description?: string;
     author: string;
     timestamp: string;
     url: string;
@@ -27,15 +26,18 @@ interface NewsArticle {
     source: {
         name: string;
     };
+    articles?: any
+    publishedAt?:any
 }
 
+
 const News = ({ simplified }: NewsPropsType) => {
-        //@ts-ignore
-    const [newsCategory, setNewsCategory] = useState<React.ChangeEvent<HTMLSelectElement> | string>("Cryptocurrency");
-    const { data } = useGetCryptosQuery(100);
-    const { data: cryptoNews } = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
+    const [newsCategory, setNewsCategory] = useState<string>("Cryptocurrency");
     //@ts-ignore
-    const news:any = simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
+    const { data } = useGetCryptosQuery(100);
+    const { data: cryptoNews }  = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
+    //@ts-ignore
+    const news:NewsArticle[] | undefined = simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
 
     const formatDate = (timestamp: number) => {
         const oldDate = new Date(timestamp);
@@ -103,7 +105,7 @@ const News = ({ simplified }: NewsPropsType) => {
                             {news.title}
                         </Heading>
                         <CardBody paddingBottom={"0"}>
-                            <Text py="2">{news.description?.length > 100 ? `${news.description.substring(0, 200)}...` : news.description}</Text>
+                            <Text py="2">{news.description && news.description.length > 100 ? `${news.description?.substring(0, 200)}...` : news.description}</Text>
                         </CardBody>
 
                         <CardFooter>
@@ -116,7 +118,6 @@ const News = ({ simplified }: NewsPropsType) => {
                                         <Text className="provider-name">{news.author}</Text>
                                     </VStack>
                                     <Text fontSize={"sm"} color={"gray"}>
-                                        {/* @ts-ignore */}
                                         {formatDate(news.publishedAt)}
                                     </Text>
                                 </VStack>

@@ -8,13 +8,18 @@ const baseUrl = "https://newsapi.org/v2";
 
 const createRequest = (url: string) => ({ url, headers: cryptoNewsApiHeaders });
 
+type PayloadType = {
+    newsCategory: string;
+    count: number;
+}
+
 export const cryptoNewsApi = createApi({
     reducerPath: "cryptoNewsApi",
     baseQuery: fetchBaseQuery({
         baseUrl
     }),
     endpoints: (builder) => ({
-        getCryptosNews: builder.query({
+        getCryptosNews: builder.query<null, PayloadType>({
             // query: ({newsCategory, count}) => createRequest(`/news/search?q=${newsCategory}&safeSearch=Off&textFormat=Raw&freshness=Day&count=${count}&setLang=ru`)
 
             //!google

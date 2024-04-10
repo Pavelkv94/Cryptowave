@@ -6,7 +6,7 @@ import { authApi } from "../services/authApi";
 import { serverApi } from "../services/serverApi";
 import userSlice from "../Slices/userSlice";
 
-export default configureStore({
+export const store =  configureStore({
     reducer: {
         [cryptoApi.reducerPath]: cryptoApi.reducer,
         [cryptoNewsApi.reducerPath]: cryptoNewsApi.reducer,
@@ -25,3 +25,5 @@ export default configureStore({
             .concat(serverApi.middleware)
 
 });
+
+export type RootState = ReturnType<typeof store.getState>

@@ -16,7 +16,7 @@ export const cryptoExchangesApi = createApi({
         baseUrl
     }),
     endpoints: (builder) => ({
-        getCryptosExchanges: builder.query({
+        getCryptosExchanges: builder.query<null, null>({
             query: () => createRequest(`/exchanges`)
         })
     })

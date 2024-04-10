@@ -25,19 +25,19 @@ export const serverApi = createApi({
         transaction: builder.mutation({
             query: (payload) => postRequest("/transactions", "POST", payload)
         }),
-        getHistory: builder.query({
+        getHistory: builder.query<null, null>({
             query: () => getRequest(`/user/${user?.id}/history`)
         }),
-        deleteHistory: builder.mutation({
+        deleteHistory: builder.mutation<string, null>({
             query: (transaction_id) => deleteRequest(`/transactions/${transaction_id}`)
         }),
-        addWatchitem: builder.mutation({
+        addWatchitem: builder.mutation<null, object>({
             query: (payload) => postRequest("/watchlist ", "POST", payload)
         }),
         getWatchList: builder.query({
             query: () => getRequest(`/user/${user?.id}/watchlist`)
         }),
-        deleteWatchItem: builder.mutation({
+        deleteWatchItem: builder.mutation<string, null>({
             query: (watch_item_id) => deleteRequest(`/watchlist/${watch_item_id}`)
         })
     }),

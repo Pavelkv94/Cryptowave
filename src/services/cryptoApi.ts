@@ -10,6 +10,10 @@ const baseUrl = "https://coinranking1.p.rapidapi.com"
 
 const createRequest = (url:string) => ({url, headers: cryptoApiHeaders})
 
+type PayloadType = {
+    coinId: string;
+     timePeriod: string;
+}
 
 export const cryptoApi = createApi({
     reducerPath: 'cryptoApi',
@@ -17,13 +21,13 @@ export const cryptoApi = createApi({
         baseUrl
     }),
     endpoints: (builder) => ({
-        getCryptos: builder.query({
+        getCryptos: builder.query<any, null>({
             query: (count) => createRequest(`/coins?limit=${count}`)
         }),
-        getCryptoDetails: builder.query({
+        getCryptoDetails: builder.query<string, null>({
             query: (coinId) => createRequest(`/coin/${coinId}`)
         }),
-        getCryptoHistory: builder.query({
+        getCryptoHistory: builder.query<null, PayloadType>({
             query: ({coinId, timePeriod}) => createRequest(`/coin/${coinId}/history?timePeriod=${timePeriod}`)
         })
         // createCrypto: builder.mutation({
