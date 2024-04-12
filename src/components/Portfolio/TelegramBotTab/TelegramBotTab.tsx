@@ -29,28 +29,28 @@ import {
     Stack
 } from "@chakra-ui/react";
 import tgBotLogo from "../.././../assets/tg-bot-logo.jpg";
-import { useGetCryptosQuery } from "../../../services/cryptoApi";
 import { useEffect, useState } from "react";
-import { useAddWatchitemMutation, useDeleteWatchItemMutation, useGetWatchListQuery } from "../../../services/serverApi";
 import millify from "millify";
 import SmallChart from "../../Homepage/SmallChart";
 import { Link as LinkReact } from "react-router-dom";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { useAddWatchitemMutation, useDeleteWatchItemMutation, useGetWatchListQuery } from "../../../store/api/serverApi";
+import { useGetCryptosQuery } from "../../../store/api/cryptoApi";
+import { useAppSelector } from "../../../store/store";
+import { IWatchItem, Icoin } from "../../../types/coins.types";
 const TelegramBotTab = () => {
+    const user = useAppSelector((state) => state.user.userData?.user);
+
     const { data: cryptosList, isSuccess } = useGetCryptosQuery(100);
-    const { data: watchList, isFetching, refetch: refetchWatchList } = useGetWatchListQuery("");
+    const { data: watchList, isFetching } = useGetWatchListQuery(user?.id || "", {skip: !user});
     const [addItem] = useAddWatchitemMutation();
     const [deleteItem] = useDeleteWatchItemMutation();
 
-    //@ts-ignore
-    const user = JSON.parse(localStorage.getItem("user"));
     const toast = useToast();
 
     const TgIcon = createIcon({
         displayName: "TgIcon",
         viewBox: "0 0 48 48",
-        //@ts-ignore
-        fill: "none",
         path: (
             <path
                 d="M41.4193 7.30899C41.4193 7.30899 45.3046 5.79399 44.9808 9.47328C44.8729 10.9883 43.9016 16.2908 43.1461 22.0262L40.5559 39.0159C40.5559 39.0159 40.3401 41.5048 38.3974 41.9377C36.4547 42.3705 33.5408 40.4227 33.0011 39.9898C32.5694 39.6652 24.9068 34.7955 22.2086 32.4148C21.4531 31.7655 20.5897 30.4669 22.3165 28.9519L33.6487 18.1305C34.9438 16.8319 36.2389 13.8019 30.8426 17.4812L15.7331 27.7616C15.7331 27.7616 14.0063 28.8437 10.7686 27.8698L3.75342 25.7055C3.75342 25.7055 1.16321 24.0823 5.58815 22.459C16.3807 17.3729 29.6555 12.1786 41.4193 7.30899Z"
@@ -61,7 +61,7 @@ const TelegramBotTab = () => {
 
     const [changing, setChanging] = useState(20);
     const [selectedCoinName, setSelectedCoinName] = useState("");
-    const [selectedCoin, setSelectedCoin] = useState<any>(null);
+    const [selectedCoin, setSelectedCoin] = useState<Icoin | null>(null);
 
     useEffect(() => {
         isSuccess && setSelectedCoinName(cryptosList?.data?.coins[0].name);
@@ -69,7 +69,7 @@ const TelegramBotTab = () => {
 
     useEffect(() => {
         if (selectedCoinName) {
-            setSelectedCoin(cryptosList?.data?.coins?.find((el: any) => el.name === selectedCoinName));
+            setSelectedCoin(cryptosList?.data?.coins?.find((el: Icoin) => el.name === selectedCoinName) || null);
         }
     }, [selectedCoinName]);
 
@@ -77,18 +77,18 @@ const TelegramBotTab = () => {
         setChanging(newValue);
     };
 
-    const handleChangeSelect = (e: any) => {
+    const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
         setSelectedCoinName(e.target.value);
     };
 
-    const selectOptions = cryptosList?.data?.coins?.map((el: any, i: any) => (
+    const selectOptions = cryptosList?.data?.coins?.map((el: Icoin, i: number) => (
         <option key={i} value={el.name}>
             {el.name} ({el.symbol})
         </option>
     ));
 
     const addWatchListItem = () => {
-      if(watchList.find((el:any) => el.name === selectedCoinName)) {
+      if(watchList && watchList.find((el:IWatchItem) => el.name === selectedCoinName)) {
         toast({
           title: "Failed.",
           description: "This cryptocurrency is already in the Watch list.",
@@ -102,7 +102,7 @@ const TelegramBotTab = () => {
           name: selectedCoinName,
           iconUrl: selectedCoin?.iconUrl,
           tg_nickname: user?.tg_nickname,
-          user: user?.id,
+          user_id: user?.id,
           changing: changing
       })
           .then(() => {
@@ -113,7 +113,6 @@ const TelegramBotTab = () => {
                   duration: 9000,
                   isClosable: true
               });
-              refetchWatchList();
           })
           .catch(() =>
               toast({
@@ -129,7 +128,7 @@ const TelegramBotTab = () => {
     };
 
     const deleteWatchListItem = (item_id: string) => () => {
-        deleteItem(item_id).then(() => refetchWatchList());
+        deleteItem(item_id)
     };
 
     return (
@@ -167,8 +166,7 @@ const TelegramBotTab = () => {
                         <Text fontWeight={"bold"}>
                             Select tracked changes value:{" "}
                             <i style={{ color: "#D53F8C" }}>
-                                {/* @ts-ignore */}
-                                {changing}% ({((parseFloat(selectedCoin?.price) * changing) / 100).toFixed(3)}$)
+                                {changing}% ({((parseFloat(selectedCoin?.price || "0") * changing) / 100).toFixed(3)}$)
                             </i>
                         </Text>
                         <Slider value={changing} onChange={handleChangeSlider} h={"40px"}>
@@ -222,8 +220,10 @@ const TelegramBotTab = () => {
                                     <Td></Td>
                                 </Tr>
                             ) : (
-                                watchList?.map((el:any, i: number) => {
-                                    const coin = cryptosList?.data?.coins?.find((item:any) => item.name === el.name);
+                                watchList?.map((el:IWatchItem, i: number) => {
+                                    const coin = cryptosList?.data?.coins?.find((item:Icoin) => item.name === el.name);
+                                    const coinPrice = coin ? +coin.price : 0;
+
                                     return (
                                         <Tr key={i}>
                                             <Td>
@@ -236,15 +236,15 @@ const TelegramBotTab = () => {
                                                     </HStack>
                                                 </LinkReact>
                                             </Td>
-                                            <Td>${(+coin?.price).toFixed(2)}</Td>
-                                            <Td>${millify(+coin?.marketCap)}</Td>
+                                            <Td>${(coinPrice).toFixed(2)}</Td>
+                                            <Td>${millify(coin ? +coin.marketCap : 0)}</Td>
 
-                                            <Td color={+coin?.change < 0 ? "#d33535" : "rgb(88, 189, 125)"}>{coin?.change}%</Td>
+                                            <Td color={(coin ? +coin.change : 0) < 0 ? "#d33535" : "rgb(88, 189, 125)"}>{coin?.change}%</Td>
                                             <Td>
-                                                <SmallChart chartData={coin?.sparkline} increase={+coin?.change > 0} smallest />
+                                                <SmallChart chartData={coin?.sparkline || []} increase={(coin ? +coin.change : 0) > 0} smallest />
                                             </Td>
                                             <Td>
-                                                {el.changing}% ({((parseFloat(coin?.price) * el.changing) / 100).toFixed(3)}$)
+                                                {el.changing}% ({((coinPrice * +el.changing) / 100).toFixed(3)}$)
                                             </Td>
                                             <Td>
                                                 <IconButton

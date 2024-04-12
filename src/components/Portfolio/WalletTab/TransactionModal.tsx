@@ -21,15 +21,27 @@ import {
     useDisclosure
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useGetHistoryQuery, useTransactionMutation } from "../../../services/serverApi";
 import { formatDateToISOString } from "../../../utils/fotmerDate";
+import { useTransactionMutation } from "../../../store/api/serverApi";
+import { useAppSelector } from "../../../store/store";
+import { Icoin } from "../../../types/coins.types";
 
-const TransactionModal = ({ coins }: any) => {
+type PropsType = {
+    coins?: Icoin[];
+};
+
+type InitTransactionType = {
+    perCoin: string | number;
+    selectedCoin: string;
+    quantity: number;
+    note: string;
+    date: string;
+};
+const TransactionModal = ({ coins }: PropsType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const user:any = localStorage.getItem("user");
+    const user = useAppSelector((state) => state.user.userData?.user);
 
     const [register] = useTransactionMutation();
-    const { refetch: refetchHistory } = useGetHistoryQuery("");
 
     const currentDate = new Date();
 
@@ -41,9 +53,9 @@ const TransactionModal = ({ coins }: any) => {
         date: formatDateToISOString(currentDate)
     };
 
-    const [transactionBody, setTransactionBody] = useState<any>(initTransactionBody);
+    const [transactionBody, setTransactionBody] = useState<InitTransactionType>(initTransactionBody);
 
-    const handleInput = (field: string) => (e:any) => setTransactionBody({ ...transactionBody, [field]: e.target.value });
+    const handleInput = (field: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => setTransactionBody({ ...transactionBody, [field]: e.currentTarget.value });
     const format = (val: number) => `$` + val;
     const parse = (val: string) => val.replace(/^\$/, "");
 
@@ -57,11 +69,11 @@ const TransactionModal = ({ coins }: any) => {
     }, [coins]);
 
     useEffect(() => {
-        const selectedCoin = coins?.find((el:any) => el.name === transactionBody.selectedCoin);
-        setTransactionBody({ ...transactionBody, perCoin: (+selectedCoin?.price).toFixed(2).toString() });
+        const selectedCoin = coins?.find((el: Icoin) => el.name === transactionBody.selectedCoin);
+        setTransactionBody({ ...transactionBody, perCoin: selectedCoin ? (+selectedCoin.price).toFixed(2).toString() : ""});
     }, [transactionBody.selectedCoin]);
 
-    const selectOptions = coins?.map((el: any, i: any) => (
+    const selectOptions = coins?.map((el: Icoin, i: number) => (
         <option key={i} value={el.name}>
             {el.name} ({el.symbol})
         </option>
@@ -70,10 +82,11 @@ const TransactionModal = ({ coins }: any) => {
     const handleClose = () => {
         onClose();
         setTransactionBody(initTransactionBody);
-    }
+    };
+
     const handleSubmitTransaction = (operation: string) => () => {
         register({
-            user: JSON.parse(user)?.id,
+            user_id: user?.id,
             coin: transactionBody.selectedCoin,
             quantity: transactionBody.quantity,
             price_per_coin: transactionBody.perCoin,
@@ -81,13 +94,10 @@ const TransactionModal = ({ coins }: any) => {
             total: (+transactionBody.quantity * +transactionBody.perCoin).toFixed(2),
             operation: operation,
             date: transactionBody.date,
-            tg_nickname: JSON.parse(user)?.tg_nickname 
+            tg_nickname: user?.tg_nickname
         }).then(() => {
             handleClose();
-            refetchHistory();            
-        }
-        );
-        
+        });
     };
 
     return (
@@ -125,7 +135,7 @@ const TransactionModal = ({ coins }: any) => {
                                 <NumberInput
                                     precision={2}
                                     onChange={(value) => setTransactionBody({ ...transactionBody, perCoin: +parse(value) })}
-                                    value={format(transactionBody.perCoin)}
+                                    value={format(+transactionBody.perCoin)}
                                 >
                                     <NumberInputField />
                                     <NumberInputStepper>
@@ -135,7 +145,12 @@ const TransactionModal = ({ coins }: any) => {
                                 </NumberInput>
                             </VStack>
                         </HStack>
-                        <Input type="datetime-local" marginTop={5} value={transactionBody.date} onChange={e => setTransactionBody({...transactionBody, date: e.target.value})}/>
+                        <Input
+                            type="datetime-local"
+                            marginTop={5}
+                            value={transactionBody.date}
+                            onChange={(e) => setTransactionBody({ ...transactionBody, date: e.target.value })}
+                        />
                         <VStack align={"start"} marginTop={4}>
                             <Text margin={0}>Note</Text>
                             <Textarea placeholder="Enter the note" value={transactionBody.note} onChange={handleInput("note")} />
@@ -154,10 +169,10 @@ const TransactionModal = ({ coins }: any) => {
                         <Button variant="ghost" mr={3} onClick={handleClose} marginRight={4}>
                             Close
                         </Button>
-                        <Button colorScheme="blue" marginRight={4} onClick={handleSubmitTransaction("buy")}>
+                        <Button colorScheme="blue" marginRight={4} onClick={handleSubmitTransaction("buy")} isDisabled={transactionBody.quantity === 0}>
                             Buy
                         </Button>
-                        <Button colorScheme="blue" onClick={handleSubmitTransaction("sell")}>
+                        <Button colorScheme="blue" onClick={handleSubmitTransaction("sell")} isDisabled={transactionBody.quantity === 0}>
                             Sell
                         </Button>
                     </ModalFooter>

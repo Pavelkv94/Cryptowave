@@ -22,36 +22,17 @@ import { Link as LinkChakra } from "@chakra-ui/react";
 import "./Homepage.scss";
 import banner from "../../images/main-banner.png";
 import { Link } from "react-router-dom";
-import { useGetCryptosQuery } from "../../services/cryptoApi";
 import millify from "millify";
 import SmallChart from "./SmallChart";
-import News from "../News";
-
-export type CoinType = {
-    "24hVolume": string;
-    btcPrice: string;
-    change: string;
-    coinrankingUrl: string;
-    color: string;
-    iconUrl: string;
-    listedAt: number;
-    lowVolume: boolean;
-    marketCap: string;
-    name: string;
-    price: string;
-    rank: number;
-    sparkline: string[];
-    symbol: string;
-    tier: number;
-    uuid: string;
-};
-
+import { useGetCryptosQuery } from "../../store/api/cryptoApi";
+import { Icoin } from "../../types/coins.types";
+// import News from "../News";
 
 const Homepage = () => {
-    const { data, isFetching } = useGetCryptosQuery(9);
-
-    const globalStats = data?.data?.stats;
-    const coins = data?.data?.coins;
+    const { data, isLoading } = useGetCryptosQuery(9, {selectFromResult: ({data}) => ({...data})});
+    
+    const globalStats = data && data.stats;
+    const coins = data && data.coins;
 
     return (
         <Box>
@@ -62,13 +43,13 @@ const Homepage = () => {
                             Today’s Cryptocurrency prices
                         </Heading>
                         <Text fontSize={"2xl"} className="title">
-                            The global crypto market cap is <b>${millify(globalStats?.totalMarketCap || 0)}</b>
+                            The global crypto market cap is <b>${data && millify( globalStats ? +globalStats.totalMarketCap : 0)}</b>
                         </Text>
                     </VStack>
                     <Image src={banner} marginRight="20px" />
                 </HStack>
             </Box>
-            {isFetching ? (
+            {isLoading ? (
                 <Stack maxW="1200px" margin="100px auto">
                     <Skeleton height="80px" />
                     <Skeleton height="80px" />
@@ -83,23 +64,23 @@ const Homepage = () => {
                         <HStack flexWrap={"wrap"} display={"flex"}>
                             <Stat minW="200px">
                                 <StatLabel>Total Cryptocurrencies</StatLabel>
-                                <StatNumber>{millify(globalStats?.total)}</StatNumber>
+                                <StatNumber>{globalStats && millify(globalStats.total)}</StatNumber>
                             </Stat>
                             <Stat minW="200px">
                                 <StatLabel>Total Exchanges</StatLabel>
-                                <StatNumber>{millify(globalStats.totalExchanges)}</StatNumber>
+                                <StatNumber>{globalStats && millify(globalStats.totalExchanges)}</StatNumber>
                             </Stat>
                             <Stat minW="200px">
                                 <StatLabel>Total Market Cup</StatLabel>
-                                <StatNumber>${millify(globalStats.totalMarketCap)}</StatNumber>
+                                <StatNumber>${globalStats && millify(+globalStats.totalMarketCap)}</StatNumber>
                             </Stat>
                             <Stat minW="200px">
                                 <StatLabel>Total 24h Volume</StatLabel>
-                                <StatNumber>${millify(globalStats.total24hVolume)}</StatNumber>
+                                <StatNumber>${globalStats && millify(+globalStats.total24hVolume)}</StatNumber>
                             </Stat>
                             <Stat minW="200px">
                                 <StatLabel>Total Markets</StatLabel>
-                                <StatNumber>{millify(globalStats.totalMarkets)}</StatNumber>
+                                <StatNumber>{globalStats && millify(globalStats.totalMarkets)}</StatNumber>
                             </Stat>
                         </HStack>
                     </Card>
@@ -114,7 +95,7 @@ const Homepage = () => {
                             </Link>
                         </HStack>
                         <SimpleGrid columns={3} spacing={10} maxW="1200px" margin="0 auto">
-                            {coins.map((el: CoinType, i: number) => (
+                            {coins && coins.map((el: Icoin, i: number) => (
                                 <Card padding={"20px"} key={i} minW="350px">
                                     <HStack>
                                         <Text fontSize="2xl">{`${el.rank}.${el.name}`}</Text>
@@ -162,7 +143,7 @@ const Homepage = () => {
                         </Text>
                     </Link>
                 </HStack>
-                <News simplified />
+                {/* <News simplified /> */}
             </Box>
         </Box>
     );

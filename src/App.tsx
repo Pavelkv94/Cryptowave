@@ -1,14 +1,29 @@
-import "./App.css";
-import Portfolio from "./components/Portfolio/Portfolio";
-import { Navbar, Footer, Homepage, Cryptocurrencies, News, CryptoDetails, Exchanges } from "./components/index";
 import { Route, Routes } from "react-router-dom";
-
-
+import Footer from "./components/Footer/Footer";
+import Navbar from "./components/Navbar/Navbar";
+import Homepage from "./components/Homepage/Homepage";
+import Cryptocurrencies from "./components/Cryptocurrencies/Cryptocurrencies";
+import CryptoDetails from "./components/Cryptocurrencies/CryptoDetails";
+import Exchanges from "./components/Exchanges/Exchanges";
+import News from "./components/News/News";
+import { useEffect } from "react";
+import { useActions } from "./hooks/useActions";
+import Portfolio from "./components/Portfolio/Portfolio";
 
 function App() {
+    const { checkAuth } = useActions();
+
+    useEffect(() => {
+        if (localStorage.getItem("token")) {
+            checkAuth();
+        }
+      //   if (localStorage.getItem("user")) {
+      //     checkAuth();
+      // }
+    }, []);
 
     return (
-        <div className="app" >
+        <div className="app">
             <Navbar />
             <div className="main">
                 <div className="routes">
@@ -19,7 +34,14 @@ function App() {
                         <Route element={<News />} path="/news" />
                         <Route element={<Exchanges />} path="/exchanges" />
                         <Route element={<Portfolio />} path="/portfolio" />
-                        <Route element={<div style={{height: "calc(100vh - 150px)"}}>empty</div>} path="*" />
+                        <Route
+                            element={
+                                <div style={{ height: "calc(100vh - 150px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    Page not found
+                                </div>
+                            }
+                            path="*"
+                        />
                     </Routes>
                 </div>
                 <Footer />

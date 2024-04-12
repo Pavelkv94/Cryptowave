@@ -18,29 +18,20 @@ import {
     Thead,
     Tr
 } from "@chakra-ui/react";
-import { useGetCryptosQuery } from "../../../services/cryptoApi";
 import TransactionModal from "./TransactionModal";
-import { useGetHistoryQuery } from "../../../services/serverApi";
 import ExpandableTableRow from "./ExpandableTableRow";
 import { RepeatClockIcon } from "@chakra-ui/icons";
+import { useGetCryptosQuery } from "../../../store/api/cryptoApi";
+import { useGetHistoryQuery } from "../../../store/api/serverApi";
+import { useAppSelector } from "../../../store/store";
+import { Icoin } from "../../../types/coins.types";
+import { IUserHistoryItem } from "../../../types/user.types";
 
-type HistoryItemType = {
-    _id: string;
-    coin: string
-    quantity: string
-    price_per_coin: string
-    note: string
-    total: string
-    operation: string
-    user: string
-    date: string
-    tg_nickname: string
-    __v: number
-};
 const WalletTab = () => {
+    const user = useAppSelector((state) => state.user.userData?.user);
+
     const { data: cryptosList, isFetching, refetch: refetchCryptos } = useGetCryptosQuery(100);
-    //@ts-ignore
-    const { data: history, isFetchingHistory, refetch: refetchHistory } = useGetHistoryQuery("");
+    const { data: history, isLoading: isFetchingHistory } = useGetHistoryQuery(user?.id || "", {skip: !user});
 
     const refreshData = () => {
         refetchCryptos();
@@ -48,21 +39,21 @@ const WalletTab = () => {
     let totalBalance = 0;
     let totalProfit = 0;
 
-    history?.forEach((transaction: HistoryItemType) => {
-        const coin = cryptosList?.data?.coins.find((el: any) => el.name === transaction.coin);
+    history?.forEach((transaction: IUserHistoryItem) => {
+        const coin = cryptosList?.data?.coins.find((el: Icoin) => el.name === transaction.coin);
         if (transaction.operation === "buy") {
-            totalBalance += parseFloat(transaction.quantity) * parseFloat(coin?.price);
+            totalBalance += parseFloat(transaction.quantity) * parseFloat(coin?.price || "0");
             totalProfit +=
-                parseFloat(transaction.quantity) * parseFloat(coin?.price) - parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin);
+                parseFloat(transaction.quantity) * parseFloat(coin?.price || "0") - parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin);
         }
         if (transaction.operation === "sell") {
-            totalBalance -= parseFloat(transaction.quantity) * parseFloat(coin?.price);
+            totalBalance -= parseFloat(transaction.quantity) * parseFloat(coin?.price || "0");
             totalProfit -=
-                parseFloat(transaction.quantity) * parseFloat(coin?.price) - parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin);
+                parseFloat(transaction.quantity) * parseFloat(coin?.price || "0") - parseFloat(transaction.quantity) * parseFloat(transaction.price_per_coin);
         }
     });
 
-    const uniqueCoinsInHistory = [...new Map(history?.map((item: HistoryItemType) => [item["coin"], item])).values()];
+    const uniqueCoinsInHistory = [...new Map(history?.map((item: IUserHistoryItem) => [item["coin"], item])).values()];
 
     return (
         <TabPanel>
@@ -121,9 +112,9 @@ const WalletTab = () => {
                                     <Td></Td>
                                 </Tr>
                             )}
-                            {uniqueCoinsInHistory?.map((item: any, i: number) => {
-                                const coin = cryptosList?.data?.coins.find((el: any) => el.name === item.coin);
-                                return <ExpandableTableRow key={i} coin={coin} history={history} refetchHistory={refetchHistory} />;
+                            {uniqueCoinsInHistory?.map((item: IUserHistoryItem, i: number) => {
+                                const coin = cryptosList?.data?.coins.find((el: Icoin) => el.name === item.coin);
+                                return <ExpandableTableRow key={i} coin={coin} history={history || []} />;
                             })}
                         </Tbody>
                     </Table>

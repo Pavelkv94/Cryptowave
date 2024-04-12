@@ -2,29 +2,27 @@ import "./Navbar.scss";
 import logo from "../../images/CryptoWave1.svg";
 import { Avatar, Button, Center, HStack, Image, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import AuthModal from "../AuthModal";
+import AuthModal from "./AuthModal";
 import ChangeAvatarModal from "./ChangeAvatarModal";
-import { useGetUserQuery, useLoginMutation } from "../../services/authApi";
+import { useAppSelector } from "../../store/store";
+import { useActions } from "../../hooks/useActions";
+import { useGetUserQuery } from "../../store/api/authApi";
 
 const Navbar = () => {
     const { pathname } = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { logoutUser } = useActions();
+    const navigate = useNavigate();
+    const user = useAppSelector((state) => state.user.userData?.user);
+    const authStatus = useAppSelector((state) => state.user);
 
-    //@ts-ignore
-    const user = JSON.parse(localStorage.getItem("user"));
     const isActiveButton = (path: string) => (pathname === path ? "active" : "");
 
-    //@ts-ignore
-    const { data: userData, refetch: refetchUser } = user ? useGetUserQuery(user.id) : { data: null, isFetching: false, refetch: () => {} };
-    const [login, { error: loginError }] = useLoginMutation();
-
-
-    const navigate = useNavigate();
+    const { data: userData } = useGetUserQuery(user?.id, {skip: !user});
 
     const logout = () => {
+        logoutUser();
         navigate("/");
-        localStorage.removeItem("user");
-        location.reload()
     };
 
     return (
@@ -58,9 +56,11 @@ const Navbar = () => {
                     </Link>
                 </HStack>
                 <Spacer />
-                {user ? (
+                {authStatus.isLoading ? (
+                    <div style={{ width: "350px", color: "white" }}>Loading</div>
+                ) : authStatus.isAuth ? (
                     <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                        <Avatar src={userData?.avatar_url} cursor={"pointer"} onClick={onOpen}/>
+                        <Avatar src={userData} cursor={"pointer"} onClick={onOpen} />
                         <NavLink to={"/portfolio"}>
                             <Button colorScheme="messenger" variant="solid">
                                 Portfolio
@@ -72,12 +72,12 @@ const Navbar = () => {
                     </HStack>
                 ) : (
                     <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                        <AuthModal mode="Login" login={login} loginError={loginError}/>
+                        <AuthModal mode="Login" />
                         <AuthModal mode="Registration" />
                     </HStack>
                 )}
             </HStack>
-            {isOpen && <ChangeAvatarModal userData={userData} isOpen={isOpen} onOpen={onOpen} onClose={onClose} refetchUser={refetchUser}/>}
+            {isOpen && <ChangeAvatarModal isOpen={isOpen} onClose={onClose}/>}
         </div>
     );
 };

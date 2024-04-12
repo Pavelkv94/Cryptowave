@@ -1,27 +1,19 @@
 import { Center, Spacer, Stat, StatArrow, Text, Wrap } from "@chakra-ui/react";
 import { Line } from "react-chartjs-2";
+import { CoinHistoryDataType } from "../types/coins.types";
 
-type HistoryType = {
-    price: string;
-    timestamp: number;
-};
 type LinePropsType = {
-    coinHistory: {
-        data?: {
-            change: string;
-            history: Array<HistoryType> | any;
-        };
-    };
-    currentPrice: string;
-    coinName: string;
+    coinHistory: CoinHistoryDataType;
+    currentPrice?: string;
+    coinName?: string;
 };
 const LineChart = ({ coinHistory, currentPrice, coinName }: LinePropsType) => {
     const coinPrice = [];
     const coinTimestamp = [];
 
-    for (let i = 0; i < coinHistory?.data?.history?.length; i += 1) {
-        coinPrice.push(coinHistory?.data?.history[i].price);
-        coinTimestamp.push(new Date(coinHistory?.data?.history[i].timestamp * 1000).toLocaleString());
+    for (let i = 0; i < coinHistory?.history?.length; i += 1) {
+        coinPrice.push(coinHistory?.history[i].price);
+        coinTimestamp.push(new Date(+coinHistory?.history[i].timestamp * 1000).toLocaleString());
     }
     const data = {
         labels: coinTimestamp.reverse(),
@@ -49,21 +41,21 @@ const LineChart = ({ coinHistory, currentPrice, coinName }: LinePropsType) => {
         <>
             <Center>
                 <Wrap>
-                    <Text><b>{coinName}</b> Price Chart</Text>
+                    <Text>
+                        <b>{coinName}</b> Price Chart
+                    </Text>
                     <Spacer />
                     <Stat>
-                        {/* @ts-ignore */}
-                        <StatArrow type={+coinHistory?.data?.change > 0 ? "increase" : "decrease"} />
+                        <StatArrow type={+coinHistory?.change > 0 ? "increase" : "decrease"} />
                     </Stat>
-                    {/* @ts-ignore */}
-                    <Text color={coinHistory?.data?.change < 0 ? "#d33535" : "rgb(88, 189, 125)"}>{coinHistory?.data?.change}%</Text>
+                    <Text color={+coinHistory?.change < 0 ? "#d33535" : "rgb(88, 189, 125)"}>{coinHistory?.change}%</Text>
                     <Spacer />
                     <Text>
                         Current <b>{coinName}</b> Price: <b>${currentPrice}</b>
                     </Text>
                 </Wrap>
             </Center>
-
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
             {/* @ts-ignore */}
             <Line data={data} options={options} />
         </>

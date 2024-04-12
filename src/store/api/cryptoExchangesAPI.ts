@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { IExchanges } from '../../types/coins.types';
 
 const cryptoExchangesApiHeaders = {
     'X-RapidAPI-Key': import.meta.env.VITE_EXCHANGES_APIKEY,
@@ -7,7 +8,8 @@ const cryptoExchangesApiHeaders = {
 
 const baseUrl = 'https://coingecko.p.rapidapi.com'
 
-const createRequest = (url:string) => ({url, headers: cryptoExchangesApiHeaders})
+const getRequest = (url:string) => ({url, headers: cryptoExchangesApiHeaders})
+
 
 
 export const cryptoExchangesApi = createApi({
@@ -16,8 +18,8 @@ export const cryptoExchangesApi = createApi({
         baseUrl
     }),
     endpoints: (builder) => ({
-        getCryptosExchanges: builder.query<null, null>({
-            query: () => createRequest(`/exchanges`)
+        getCryptosExchanges: builder.query<IExchanges[], null>({
+            query: () => getRequest(`/exchanges`)
         })
     })
 })

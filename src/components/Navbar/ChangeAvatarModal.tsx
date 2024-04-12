@@ -15,10 +15,16 @@ import {
     WrapItem
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useUpdateAvatarMutation } from "../../services/authApi";
+import { useAppSelector } from "../../store/store";
+import { useUpdateAvatarMutation } from "../../store/api/authApi";
 
-const ChangeAvatarModal = ({ isOpen, onClose, userData, refetchUser }: any) => {
-    const [currentAvatar, setCurrentAvatar] = useState(userData?.avatar_url);
+type PropsType = {
+    isOpen: boolean
+    onClose: () => void
+}
+const ChangeAvatarModal = ({ isOpen, onClose }: PropsType) => {
+    const user = useAppSelector((state) => state.user.userData?.user);
+    const [currentAvatar, setCurrentAvatar] = useState(user?.avatar_url || "");
 
     const [update] = useUpdateAvatarMutation();
 
@@ -43,8 +49,7 @@ const ChangeAvatarModal = ({ isOpen, onClose, userData, refetchUser }: any) => {
     ];
 
     const updateAvatar = (url:string) => () => {
-        update({ avatar_url: url }).then(() => {
-            refetchUser();
+        update({ avatar_url: url, user_id: user ? user.id : "" }).then(() => {
             onClose();
         })
     };
@@ -58,7 +63,7 @@ const ChangeAvatarModal = ({ isOpen, onClose, userData, refetchUser }: any) => {
                 <ModalBody>
                     <HStack alignItems={"flex-start"} marginBottom={4}>
                         <Avatar src={currentAvatar} size="xl" />
-                        <Heading>{userData?.username}</Heading>
+                        <Heading>{user?.email}</Heading>
                     </HStack>
                     <Text marginBottom={4} color={"gray"}>
                         Here you can choose new avatar:

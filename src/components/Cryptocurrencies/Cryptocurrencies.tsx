@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { useGetCryptosQuery } from "../services/cryptoApi";
 import { Box, HStack, Heading, Image, Input, Skeleton, Stack, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import millify from "millify";
-import SmallChart from "./Homepage/SmallChart";
-import banner from "../images/Exchanges.png";
-import { CoinType } from "./Homepage/Homepage";
+import SmallChart from "../Homepage/SmallChart";
+import banner from "../../images/Exchanges.png";
 import { Link } from "react-router-dom";
+import { useGetCryptosQuery } from "../../store/api/cryptoApi";
+import { Icoin } from "../../types/coins.types";
 
 const Cryptocurrencies = () => {
-    const { data: cryptosList, isFetching } = useGetCryptosQuery(100);
+    const { data: cryptosList, isLoading } = useGetCryptosQuery(100, {selectFromResult: ({data}) => ({...data})});
 
     
-    const [cryptos, setCryptos] = useState(cryptosList?.data?.coins);
+    const [cryptos, setCryptos] = useState(cryptosList?.coins);
     const [searchTerm, setSearchTerm] = useState("");
     
     useEffect(() => {
-        setCryptos(cryptosList?.data?.coins);
-        const filteredData = cryptosList?.data?.coins.filter((coin: CoinType) => coin.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        setCryptos(cryptosList?.coins);
+        const filteredData = cryptosList?.coins.filter((coin: Icoin) => coin.name.toLowerCase().includes(searchTerm.toLowerCase()));
         setCryptos(filteredData);
     }, [searchTerm, cryptosList]);
 
@@ -36,7 +36,7 @@ const Cryptocurrencies = () => {
                 <Input placeholder="Search CryptoCurrency" onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} w={"300px"} />
             </Box>
 
-            {isFetching ? (
+            {isLoading ? (
                 <Stack maxW="1200px" margin="50px auto">
                     <Skeleton height="80px" />
                     <Skeleton height="80px" />
@@ -62,7 +62,7 @@ const Cryptocurrencies = () => {
                     </Thead>
                     <Tbody>
                         {cryptos?.length === 0 && <Tr><Td>Not Found</Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td></Tr>}
-                        {cryptos?.map((coin:CoinType, i:number) => (
+                        {cryptos?.map((coin:Icoin, i:number) => (
                             <Tr key={i}>
                                 <Td w={"10px"} paddingRight={"0px"}>{`${coin.rank}.`}</Td>
                                 <Td>

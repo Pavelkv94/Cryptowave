@@ -19,35 +19,26 @@ import {
     Tr,
     VStack
 } from "@chakra-ui/react";
-import { useGetCryptosExchangesQuery } from "../services/cryptoExchangesAPI";
 import millify from "millify";
 import { useEffect, useState } from "react";
-import banner from "../images/currency-banner.png";
+import banner from "../../images/currency-banner.png";
+import { useGetCryptosExchangesQuery } from "../../store/api/cryptoExchangesAPI";
+import {tempExchanges} from "./exchanges";
+import { IExchanges } from "../../types/coins.types";
 
-type ExchangeType = {
-    country: string;
-    description: string;
-    has_trading_incentive: boolean;
-    id: string;
-    image: string;
-    name: string;
-    trade_volume_24h_btc: number;
-    trade_volume_24h_btc_normalized: number;
-    trust_score: number;
-    trust_score_rank: number;
-    url: string;
-    year_established: number;
-};
 const Exchanges = () => {
-    const { data:exchangesList, isFetching } = useGetCryptosExchangesQuery("");
-    const [exchanges, setExchanges] = useState([]);
+    const { data: exchangesList, isLoading, isError } = useGetCryptosExchangesQuery(null);
+    const [exchanges, setExchanges] = useState<IExchanges[] | undefined>([]);
     const [searchTerm, setSearchTerm] = useState("");
-
+    
     useEffect(() => {
-      exchanges && setExchanges(exchangesList);
-      const filteredData = exchangesList?.filter((ex: ExchangeType) => ex.name.toLowerCase().includes(searchTerm.toLowerCase()));
-      setExchanges(filteredData);
-  }, [searchTerm, exchangesList]);
+        isError && setExchanges(tempExchanges)
+    }, [isError])
+    useEffect(() => {
+        setExchanges(exchangesList);
+        const filteredData:IExchanges[]  = exchangesList ? exchangesList.filter((ex: IExchanges) => ex.name.toLowerCase().includes(searchTerm.toLowerCase())) : [];
+        setExchanges(filteredData);
+    }, [searchTerm, exchangesList]);
 
     const setExchangeColor = (rank: number) => (rank > 7 ? "green" : rank > 4 ? "orange" : "red");
 
@@ -60,14 +51,13 @@ const Exchanges = () => {
                             Top Cryptocurrensy exchanges
                         </Heading>
                     </VStack>
-                    <Image src={banner} marginRight="20px" maxW="250px"/>
-
+                    <Image src={banner} marginRight="20px" maxW="250px" />
                 </HStack>
             </Box>
             <Box maxW="1200px" margin="20px auto">
                 <Input placeholder="Search Exchanges" onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} w={"300px"} />
             </Box>
-            {isFetching ? (
+            {isLoading ? (
                 <Stack maxW="1200px" margin="50px auto">
                     <Skeleton height="80px" />
                     <Skeleton height="80px" />
@@ -93,8 +83,18 @@ const Exchanges = () => {
                             </Tr>
                         </Thead>
                         <Tbody>
-                        {exchanges?.length === 0 && <Tr><Td>Not Found</Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td><Td></Td></Tr>}
-                            {exchanges?.map((el: ExchangeType, i: number) => (
+                            {exchanges?.length === 0 && (
+                                <Tr>
+                                    <Td>Not Found</Td>
+                                    <Td></Td>
+                                    <Td></Td>
+                                    <Td></Td>
+                                    <Td></Td>
+                                    <Td></Td>
+                                    <Td></Td>
+                                </Tr>
+                            )}
+                            {exchanges?.map((el: IExchanges, i: number) => (
                                 <LinkBox as={Tr} key={i}>
                                     <Td w={"10px"} paddingRight={"0px"}>
                                         {el.trust_score_rank}

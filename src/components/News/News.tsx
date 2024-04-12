@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useGetCryptosQuery } from "../services/cryptoApi";
-import { useGetCryptosNewsQuery } from "../services/cryptoNewsApi";
+import { useState } from "react";
 import { Box, Card, CardBody, CardFooter, Center, HStack, Heading, Image, Select, SimpleGrid, Skeleton, Spacer, Stack, Text, VStack } from "@chakra-ui/react";
 import { Link as LinkChakra } from "@chakra-ui/react";
-import { CoinType } from "./Homepage/Homepage";
+import { useGetCryptosQuery } from "../../store/api/cryptoApi";
+import { useGetCryptosNewsQuery } from "../../store/api/cryptoNewsApi";
+import { INewsArticle, Icoin } from "../../types/coins.types";
 
 const demoImage = "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png";
 
@@ -11,39 +11,16 @@ type NewsPropsType = {
     simplified?: boolean;
 };
 
-interface ImageObject {
-    thumbnail: string;
-    original: string;
-}
-
-interface NewsArticle {
-    title: string;
-    description?: string;
-    author: string;
-    timestamp: string;
-    url: string;
-    urlToImage: ImageObject;
-    source: {
-        name: string;
-    };
-    articles?: any
-    publishedAt?:any
-}
-
-
 const News = ({ simplified }: NewsPropsType) => {
     const [newsCategory, setNewsCategory] = useState<string>("Cryptocurrency");
-    //@ts-ignore
     const { data } = useGetCryptosQuery(100);
-    const { data: cryptoNews }  = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
-    //@ts-ignore
-    const news:NewsArticle[] | undefined = simplified ? cryptoNews?.articles.slice(0, 12) : cryptoNews?.articles;
+    const { data: cryptoNews, isLoading, isError }  = useGetCryptosNewsQuery({ newsCategory, count: simplified ? 6 : 21 });
+    const news:INewsArticle[] | undefined = cryptoNews && (simplified ? cryptoNews.articles.slice(0, 12) : cryptoNews.articles);
 
-    const formatDate = (timestamp: number) => {
+    const formatDate = (timestamp: number | string) => {
         const oldDate = new Date(timestamp);
         const now = Date.now();
-        //@ts-ignore
-        const differenceInSeconds = Math.floor((now - oldDate) / 1000);
+        const differenceInSeconds = Math.floor((now - +oldDate) / 1000);
 
         const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
@@ -61,7 +38,7 @@ const News = ({ simplified }: NewsPropsType) => {
         return formattedTimestamp;
     };
 
-    if (!news)
+    if (isLoading)
         return (
             <Stack maxW="1200px" margin="100px auto">
                 <Skeleton height="80px" />
@@ -72,6 +49,19 @@ const News = ({ simplified }: NewsPropsType) => {
                 <Skeleton height="80px" />
             </Stack>
         );
+
+        if (isError)
+            return (
+                <Stack maxW="1200px" margin="100px auto">
+                    <Skeleton height="80px" />
+                    <Skeleton height="80px" />
+                    <Skeleton height="80px" />
+                    <h1>Sorry, News Api unavailable now. :(</h1>
+                    <Skeleton height="80px" />
+                    <Skeleton height="80px" />
+                    <Skeleton height="80px" />
+                </Stack>
+            );
 
     return (
         <Box maxW={"1200px"} margin={"0 auto"}>
@@ -85,7 +75,7 @@ const News = ({ simplified }: NewsPropsType) => {
                     <Text fontSize={"md"}>Select news category: </Text>
                     <Select w="300px" defaultValue={"Cryptocurency"} onChange={(e) => setNewsCategory(e.target.value)}>
                         <option value="Cryptocurency">Cryptocurrency</option>
-                        {data?.data?.coins?.map((currency: CoinType, i: number) => (
+                        {data?.data?.coins?.map((currency: Icoin, i: number) => (
                             <option key={i} value={currency.name}>
                                 {currency.name}
                             </option>
@@ -95,10 +85,9 @@ const News = ({ simplified }: NewsPropsType) => {
             )}
 
             <SimpleGrid columns={3} spacing={10} display={"flex"} flexWrap={"wrap"}>
-                {news.map((news: NewsArticle, i: number) => (
+                {news && news.map((news: INewsArticle, i: number) => (
                     <Card key={i} direction={{ base: "column" }} overflow="hidden" variant="outline" minW="350px" maxW="370px">
                         <HStack padding={"20px 20px 0 20px"}>
-                            {/*@ts-ignore */}
                             <Image objectFit="contain" maxW={{ base: "40%", sm: "100%" }} height={220} src={news?.urlToImage || demoImage} alt="Caffe Latte" />
                         </HStack>
                         <Heading padding={"20px 20px 0 20px"} size="md">

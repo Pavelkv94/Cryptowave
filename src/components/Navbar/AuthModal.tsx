@@ -14,34 +14,28 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useRegistrationMutation } from "../services/authApi";
-import { setUser } from "../Slices/userSlice";
-import { useDispatch } from "react-redux";
+import { useRegistrationMutation } from "../../store/api/authApi";
+import { IUserLogin } from "../../types/user.types";
+import { useActions } from "../../hooks/useActions";
+import { useAppSelector } from "../../store/store";
 
 type AuthModalPropsType = {
     mode: "Login" | "Registration";
-    login?: any
-    loginError?: any
 };
 
-type UserDataType = {
-    username: string;
-    password: string;
-    tg_nickname?: string;
-};
-
-const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
-    const dispatch = useDispatch();
+const AuthModal = ({ mode }: AuthModalPropsType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
+    const { userLogin } = useActions();
+    const authStatus = useAppSelector((state) => state.user);
 
-    const initData: UserDataType = {
-        username: "",
+    const initData: IUserLogin = {
+        email: "",
         password: "",
         tg_nickname: ""
     };
 
-    const [data, setData] = useState<UserDataType>(initData);
+    const [data, setData] = useState<IUserLogin>(initData);
     const [show, setShow] = useState(false);
     const [register, { error: registrationError, isSuccess: registrationSuccess }] = useRegistrationMutation();
 
@@ -52,27 +46,12 @@ const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
         setData(initData);
     };
 
-    const handleRegistration = (payload: UserDataType) => {
+    const handleRegistration = (payload: IUserLogin) => {
         register(payload).then(() => closeModal());
     };
 
-    const handleLogin = (payload: UserDataType) => {
-        login(payload).then((res: any) => {
-            if(res.error) {
-                closeModal();
-                console.log("error")
-
-            } else {
-                dispatch(setUser(res));
-                localStorage.setItem("user", JSON.stringify(res.data))
-                closeModal();
-                location.reload()
-                console.log(res)
-                console.log("good")
-
-            }
-           
-        });
+    const handleLogin = (payload: IUserLogin) => {
+        userLogin(payload);
     };
 
     useEffect(() => {
@@ -92,7 +71,7 @@ const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
                 duration: 9000,
                 isClosable: true
             });
-        loginError &&
+        authStatus.error &&
             toast({
                 title: "Error.",
                 description: "An error occurred during login.",
@@ -100,10 +79,10 @@ const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
                 duration: 9000,
                 isClosable: true
             });
-    }, [registrationError, registrationSuccess, loginError]);
+    }, [registrationError, registrationSuccess, toast, authStatus.error]);
 
     const handleSubmit = () => {
-        mode === "Login" ? handleLogin({ username: data.username, password: data.password }) : handleRegistration(data);
+        mode === "Login" ? handleLogin({ email: data.email, password: data.password }) : handleRegistration(data);
     };
 
     return (
@@ -118,12 +97,7 @@ const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
                     <ModalHeader>{mode}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <Input
-                            value={data.username}
-                            onChange={(e) => setData({ ...data, username: e.target.value })}
-                            placeholder="Enter login"
-                            marginBottom={5}
-                        />
+                        <Input value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} placeholder="Enter Email" marginBottom={5} />
                         {mode === "Registration" && (
                             <Input
                                 value={data.tg_nickname}
@@ -152,11 +126,7 @@ const AuthModal = ({ mode, login, loginError }: AuthModalPropsType) => {
                         <Button variant="ghost" mr={3} onClick={closeModal}>
                             Close
                         </Button>
-                        <Button
-                            colorScheme="blue"
-                            isDisabled={data.username.trim() === "" || data.password.trim() === ""}
-                            onClick={handleSubmit}
-                        >
+                        <Button colorScheme="blue" isDisabled={data.email.trim() === "" || data.password.trim() === ""} onClick={handleSubmit}>
                             {mode}
                         </Button>
                     </ModalFooter>
