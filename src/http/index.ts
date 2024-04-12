@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem("token") || "";
-    config.headers.Authorization = `Bearer ${JSON.parse(token)}`;
+    config.headers.Authorization = `Bearer ${JSON.parse(token)}`; //todo JSON.parse work for deploy. not locally
     return config;
 });
 
