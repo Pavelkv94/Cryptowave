@@ -1,19 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { buildPriorDate } from "../../utils/buildPriorDate";
 import { INewsArticle } from "../../types/coins.types";
 
-const cryptoNewsApiHeaders = {};
-
-const baseUrl = "https://newsapi.org/v2";
-
-const getRequest = (url: string) => ({ url, headers: cryptoNewsApiHeaders });
+const baseUrl = import.meta.env.VITE_SERVER_URL;
 
 type PayloadType = {
     newsCategory: string;
     count: number;
 };
 type NewsArticleData = {
-        articles: INewsArticle[];
+    articles: INewsArticle[];
 };
 
 export const cryptoNewsApi = createApi({
@@ -23,8 +18,7 @@ export const cryptoNewsApi = createApi({
     }),
     endpoints: (builder) => ({
         getCryptosNews: builder.query<NewsArticleData, PayloadType>({
-            query: ({ newsCategory }) =>
-                getRequest(`/everything?q=${newsCategory}&from=${buildPriorDate()}&sortBy=publishedAt&apiKey=${import.meta.env.VITE_NEWSAPI_KEY}&language=en`)
+            query: ({ newsCategory }) => `${baseUrl}/external/news?newsCategory=${newsCategory}`
         })
     })
 });

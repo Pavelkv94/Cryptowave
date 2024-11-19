@@ -36,13 +36,10 @@ import { Link as LinkReact } from "react-router-dom";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { useAddWatchitemMutation, useDeleteWatchItemMutation, useGetWatchListQuery } from "../../../store/api/serverApi";
 import { useGetCryptosQuery } from "../../../store/api/cryptoApi";
-import { useAppSelector } from "../../../store/store";
 import { IWatchItem, Icoin } from "../../../types/coins.types";
 const TelegramBotTab = () => {
-    const user = useAppSelector((state) => state.user.userData?.user);
-
     const { data: cryptosList, isSuccess } = useGetCryptosQuery(100);
-    const { data: watchList, isFetching } = useGetWatchListQuery(user?.id || "", {skip: !user});
+    const { data: watchList, isFetching } = useGetWatchListQuery(null);
     const [addItem] = useAddWatchitemMutation();
     const [deleteItem] = useDeleteWatchItemMutation();
 
@@ -64,12 +61,12 @@ const TelegramBotTab = () => {
     const [selectedCoin, setSelectedCoin] = useState<Icoin | null>(null);
 
     useEffect(() => {
-        isSuccess && setSelectedCoinName(cryptosList?.data?.coins[0].name);
+        isSuccess && setSelectedCoinName(cryptosList?.coins[0].name);
     }, [isSuccess]);
 
     useEffect(() => {
         if (selectedCoinName) {
-            setSelectedCoin(cryptosList?.data?.coins?.find((el: Icoin) => el.name === selectedCoinName) || null);
+            setSelectedCoin(cryptosList?.coins?.find((el: Icoin) => el.name === selectedCoinName) || null);
         }
     }, [selectedCoinName]);
 
@@ -81,54 +78,51 @@ const TelegramBotTab = () => {
         setSelectedCoinName(e.target.value);
     };
 
-    const selectOptions = cryptosList?.data?.coins?.map((el: Icoin, i: number) => (
+    const selectOptions = cryptosList?.coins?.map((el: Icoin, i: number) => (
         <option key={i} value={el.name}>
             {el.name} ({el.symbol})
         </option>
     ));
 
     const addWatchListItem = () => {
-      if(watchList && watchList.find((el:IWatchItem) => el.name === selectedCoinName)) {
-        toast({
-          title: "Failed.",
-          description: "This cryptocurrency is already in the Watch list.",
-          status: "error",
-          duration: 9000,
-          isClosable: true
-      })
-      } else {
-        addItem({
-          symbol: selectedCoin?.symbol,
-          name: selectedCoinName,
-          iconUrl: selectedCoin?.iconUrl,
-          tg_nickname: user?.tg_nickname,
-          user_id: user?.id,
-          changing: changing
-      })
-          .then(() => {
-              toast({
-                  title: "Success.",
-                  description: "Cryptocurrency added to your Watch List.",
-                  status: "success",
-                  duration: 9000,
-                  isClosable: true
-              });
-          })
-          .catch(() =>
-              toast({
-                  title: "Error.",
-                  description: "An error occurred.",
-                  status: "error",
-                  duration: 9000,
-                  isClosable: true
-              })
-          );
-      }
-        
+        if (watchList && watchList.find((el: IWatchItem) => el.name === selectedCoinName)) {
+            toast({
+                title: "Failed.",
+                description: "This cryptocurrency is already in the Watch list.",
+                status: "error",
+                duration: 9000,
+                isClosable: true
+            });
+        } else {
+            addItem({
+                symbol: selectedCoin?.symbol,
+                name: selectedCoinName,
+                iconUrl: selectedCoin?.iconUrl,
+                changing: changing
+            })
+                .then(() => {
+                    toast({
+                        title: "Success.",
+                        description: "Cryptocurrency added to your Watch List.",
+                        status: "success",
+                        duration: 9000,
+                        isClosable: true
+                    });
+                })
+                .catch(() =>
+                    toast({
+                        title: "Error.",
+                        description: "An error occurred.",
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true
+                    })
+                );
+        }
     };
 
     const deleteWatchListItem = (item_id: string) => () => {
-        deleteItem(item_id)
+        deleteItem(item_id);
     };
 
     return (
@@ -137,7 +131,8 @@ const TelegramBotTab = () => {
                 <HStack justifyContent={"space-between"}>
                     <Text maxW={"550px"}>
                         Here are the telegram bot settings.
-                        <br /> It can notify you about changes in the value of selected cryptocurrencies for the last 24h, as well as about your current balance.
+                        <br /> It can notify you about changes in the value of selected cryptocurrencies for the last 24h, as well as about your current
+                        balance.
                         <br /> CryptoWave_bot updates cryptocurrency status every <b>12h</b>.
                     </Text>
                     <VStack align={"end"}>
@@ -220,8 +215,8 @@ const TelegramBotTab = () => {
                                     <Td></Td>
                                 </Tr>
                             ) : (
-                                watchList?.map((el:IWatchItem, i: number) => {
-                                    const coin = cryptosList?.data?.coins?.find((item:Icoin) => item.name === el.name);
+                                watchList?.map((el: IWatchItem, i: number) => {
+                                    const coin = cryptosList?.coins?.find((item: Icoin) => item.name === el.name);
                                     const coinPrice = coin ? +coin.price : 0;
 
                                     return (
@@ -236,7 +231,7 @@ const TelegramBotTab = () => {
                                                     </HStack>
                                                 </LinkReact>
                                             </Td>
-                                            <Td>${(coinPrice).toFixed(2)}</Td>
+                                            <Td>${coinPrice.toFixed(2)}</Td>
                                             <Td>${millify(coin ? +coin.marketCap : 0)}</Td>
 
                                             <Td color={(coin ? +coin.change : 0) < 0 ? "#d33535" : "rgb(88, 189, 125)"}>{coin?.change}%</Td>

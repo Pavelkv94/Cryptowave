@@ -1,6 +1,8 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IUser, IUserLogin } from "../../types/user.types";
-// import { checkAuth } from "../user/user.actions";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ILoginOutput, IUser, IUserLogin } from "../../types/user.types";
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import axiosInstance from "../../http";
+import { setUser } from "../user/user.slice";
 
 const authApiHeaders = {
     "Content-Type": "application/json"
@@ -15,9 +17,9 @@ type AvatarPayloadType = {
     user_id: string;
 };
 
-const getAuthorizedRequest = (url: string) => ({ url, headers: { ...authApiHeaders, Authorization: `Bearer ${JSON.parse(token)}` } });
+const getAuthorizedRequest = (url: string) => ({ url, headers: { ...authApiHeaders, Authorization: `Bearer ${token}` } });
 
-const postRequest = (url: string, method: string, payload: object) => ({ url, method, body: payload, headers: { ...authApiHeaders } });
+const postRequest = (url: string, method: string, payload: object) => ({ url, method, data: payload, headers: { ...authApiHeaders } });
 
 const postAuthorizedRequest = (url: string, method: string, payload: object) => ({
     url,
@@ -26,29 +28,77 @@ const postAuthorizedRequest = (url: string, method: string, payload: object) => 
     headers: { ...authApiHeaders, Authorization: `Bearer ${JSON.parse(token)}` }
 });
 
+const axiosBaseQuery =
+    ({ baseUrl } = { baseUrl: "" }) =>
+    async ({ url, method, data, params, headers }: AxiosRequestConfig) => {
+        try {
+            const result: AxiosResponse = await axiosInstance({
+                url: baseUrl + url,
+                method,
+                data,
+                params,
+                headers
+            });
+            return { data: result.data };
+        } catch (axiosError: unknown) {
+            const err = axiosError as AxiosError;
+            return {
+                error: {
+                    status: err.response?.status || 500,
+                    data: err.response?.data || err.message
+                }
+            };
+        }
+    };
+
 export const authApi = createApi({
     reducerPath: "authApi",
-    tagTypes: ["UserAvatar"],
-    baseQuery: fetchBaseQuery({
+    tagTypes: ["UserAvatar", "Me"],
+    baseQuery: axiosBaseQuery({
         baseUrl
     }),
     endpoints: (builder) => ({
         getUser: builder.query({
-            query: (user_id) => getAuthorizedRequest(`/api/auth/avatar/${user_id}`),
+            query: (user_id) => getAuthorizedRequest(`/auth/avatar/${user_id}`),
             providesTags: ["UserAvatar"]
         }),
-        registration: builder.mutation<IUser, IUserLogin>({
-            query: (payload) => postRequest("/api/auth/registration", "POST", payload)
+        getMe: builder.query({
+            query: () => getAuthorizedRequest("/auth/me"),
+            providesTags: ["Me"],
+            onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+                try {
+                    const { data } = await queryFulfilled;
+                    dispatch(setUser(data)); // Store the response data in Redux state
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            }
         }),
-        login: builder.mutation<IUser, IUserLogin>({
-            query: (payload) => postRequest("/api/auth/login", "POST", payload),
+        login: builder.mutation<ILoginOutput, IUserLogin>({
+            query: (payload) => {
+                return postRequest("/auth/login", "POST", payload);
+            },
+            async onQueryStarted(payload, { dispatch, queryFulfilled }) {
+                try {
+                    console.log("AFTER LOGIN");
+
+                    const { data } = await queryFulfilled;
+                    localStorage.setItem("token", data.accessToken); // Save token after login
+                    // Optionally invalidate "Me" tag to refresh user info after login
+                    dispatch(authApi.util.invalidateTags(["Me"]));
+                } catch (error) {
+                    console.error("Login failed:", error);
+                }
+            }
+        }),
+        registration: builder.mutation<IUser, IUserLogin>({
+            query: (payload) => postRequest("/auth/registration", "POST", payload)
         }),
         updateAvatar: builder.mutation<null, AvatarPayloadType>({
-            query: (payload) => postAuthorizedRequest(`/api/auth/user/${payload.user_id}/updateAvatar`, "POST", { avatar_url: payload.avatar_url }),
-            invalidatesTags: ["UserAvatar"],
-            
+            query: (payload) => postAuthorizedRequest(`/auth/user/${payload.user_id}/updateAvatar`, "POST", { avatar_url: payload.avatar_url }),
+            invalidatesTags: ["UserAvatar"]
         })
     })
 });
 
-export const { useRegistrationMutation, useLoginMutation, useUpdateAvatarMutation, useGetUserQuery } = authApi;
+export const { useRegistrationMutation, useUpdateAvatarMutation, useGetUserQuery, useGetMeQuery, useLoginMutation } = authApi;

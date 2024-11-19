@@ -14,10 +14,8 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useRegistrationMutation } from "../../store/api/authApi";
+import { useLoginMutation, useRegistrationMutation } from "../../store/api/authApi";
 import { IUserLogin } from "../../types/user.types";
-import { useActions } from "../../hooks/useActions";
-import { useAppSelector } from "../../store/store";
 
 type AuthModalPropsType = {
     mode: "Login" | "Registration";
@@ -26,8 +24,6 @@ type AuthModalPropsType = {
 const AuthModal = ({ mode }: AuthModalPropsType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
-    const { userLogin } = useActions();
-    const authStatus = useAppSelector((state) => state.user);
 
     const initData: IUserLogin = {
         email: "",
@@ -38,6 +34,7 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
     const [data, setData] = useState<IUserLogin>(initData);
     const [show, setShow] = useState(false);
     const [register, { error: registrationError, isSuccess: registrationSuccess }] = useRegistrationMutation();
+    const [login, { error: loginError }] = useLoginMutation();
 
     const handleClick = () => setShow(!show);
 
@@ -50,15 +47,19 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
         register(payload).then(() => closeModal());
     };
 
-    const handleLogin = (payload: IUserLogin) => {
-        userLogin(payload);
+    const handleLogin = async (payload: IUserLogin) => {
+        await login(payload)
+            .unwrap()
+            .finally(() => onClose());
     };
 
     useEffect(() => {
         registrationError &&
             toast({
                 title: "Error.",
-                description: "An error occurred during registration.",
+                description: `An error occurred during registration. ${registrationError.data.errorsMessages.map(
+                    (error: { field: string; message: string }) => `${error.field} - ${error.message}`
+                )}`,
                 status: "error",
                 duration: 9000,
                 isClosable: true
@@ -71,15 +72,15 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
                 duration: 9000,
                 isClosable: true
             });
-        authStatus.error &&
+        loginError &&
             toast({
                 title: "Error.",
-                description: "An error occurred during login.",
+                description: "An error occurred during login." + loginError.data.message,
                 status: "error",
                 duration: 9000,
                 isClosable: true
             });
-    }, [registrationError, registrationSuccess, toast, authStatus.error]);
+    }, [registrationError, registrationSuccess, toast, loginError]);
 
     const handleSubmit = () => {
         mode === "Login" ? handleLogin({ email: data.email, password: data.password }) : handleRegistration(data);

@@ -20,16 +20,17 @@ import {
 } from "@chakra-ui/react";
 import { Link as LinkChakra } from "@chakra-ui/react";
 import "./Homepage.scss";
-import banner from "../../images/main-banner.png";
+import banner from "../../assets/images/main-banner.png";
 import { Link } from "react-router-dom";
 import millify from "millify";
 import SmallChart from "./SmallChart";
 import { useGetCryptosQuery } from "../../store/api/cryptoApi";
 import { Icoin } from "../../types/coins.types";
-// import News from "../News";
+import News from "../News/News";
 
 const Homepage = () => {
-    const { data, isLoading } = useGetCryptosQuery(9, {selectFromResult: ({data}) => ({...data})});
+    const { data, isLoading } = useGetCryptosQuery(9);
+    console.log(data);
     
     const globalStats = data && data.stats;
     const coins = data && data.coins;
@@ -143,7 +144,7 @@ const Homepage = () => {
                         </Text>
                     </Link>
                 </HStack>
-                {/* <News simplified /> */}
+                <News simplified />
             </Box>
         </Box>
     );

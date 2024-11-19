@@ -9,32 +9,41 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem("token") || "";
-    config.headers.Authorization = `Bearer ${JSON.parse(token)}`; //todo JSON.parse work for deploy. not locally
+    try {
+        config.headers.Authorization = `Bearer ${JSON.parse(token)}`;
+    } catch (e) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
 });
 
 axiosInstance.interceptors.response.use(
-    (config) => {
-        return config;
-    },
+    (response) => response,
     async (error) => {
-       console.log(error);
-       
         const originRequest = error.config;
-        if (error.response.status === 401 && error.config && !error.config._isRetry) {
+        if (error.response.status === 401 && !originRequest._isRetry) {
             try {
-                const response = await axios.get<AxiosResponse>(`${API_URL}/api/auth/refresh`, { withCredentials: true });
-
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                //@ts-expect-error
-                localStorage.setItem("token", response.data.accessToken);
+                await refreshAccessToken();
                 return axiosInstance.request(originRequest);
             } catch (error) {
-                console.log(error);
+                console.error("Token refresh failed:", error);
+                await logoutUser();
             }
         }
         throw error;
     }
 );
+
+const refreshAccessToken = async (): Promise<string> => {
+    const response: AxiosResponse = await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
+    const newToken = response.data.accessToken;
+    localStorage.setItem("token", newToken);
+    return newToken;
+};
+
+export const logoutUser = async () => {
+    localStorage.removeItem("token");
+    await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
+};
 
 export default axiosInstance;

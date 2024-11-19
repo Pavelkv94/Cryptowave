@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import millify from "millify";
 import { useEffect, useState } from "react";
-import banner from "../../images/currency-banner.png";
+import banner from "../../assets/images/currency-banner.png";
 import { useGetCryptosExchangesQuery } from "../../store/api/cryptoExchangesAPI";
 import {tempExchanges} from "./exchanges";
 import { IExchanges } from "../../types/coins.types";

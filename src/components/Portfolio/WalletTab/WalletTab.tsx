@@ -23,15 +23,13 @@ import ExpandableTableRow from "./ExpandableTableRow";
 import { RepeatClockIcon } from "@chakra-ui/icons";
 import { useGetCryptosQuery } from "../../../store/api/cryptoApi";
 import { useGetHistoryQuery } from "../../../store/api/serverApi";
-import { useAppSelector } from "../../../store/store";
 import { Icoin } from "../../../types/coins.types";
 import { IUserHistoryItem } from "../../../types/user.types";
 
 const WalletTab = () => {
-    const user = useAppSelector((state) => state.user.userData?.user);
 
     const { data: cryptosList, isFetching, refetch: refetchCryptos } = useGetCryptosQuery(100);
-    const { data: history, isLoading: isFetchingHistory } = useGetHistoryQuery(user?.id || "", {skip: !user});
+    const { data: history, isLoading: isFetchingHistory } = useGetHistoryQuery(null);
 
     const refreshData = () => {
         refetchCryptos();
@@ -40,7 +38,7 @@ const WalletTab = () => {
     let totalProfit = 0;
 
     history?.forEach((transaction: IUserHistoryItem) => {
-        const coin = cryptosList?.data?.coins.find((el: Icoin) => el.name === transaction.coin);
+        const coin = cryptosList?.coins.find((el: Icoin) => el.name === transaction.coin);
         if (transaction.operation === "buy") {
             totalBalance += parseFloat(transaction.quantity) * parseFloat(coin?.price || "0");
             totalProfit +=
@@ -69,7 +67,7 @@ const WalletTab = () => {
                         <Heading size="md">${totalBalance.toFixed(2)}</Heading>
                     </CardBody>
                 </Card>
-                <TransactionModal coins={cryptosList?.data?.coins} />
+                <TransactionModal coins={cryptosList?.coins} />
                 <Button justifySelf={"end"} onClick={refreshData}>
                     <Icon as={RepeatClockIcon} marginRight={"2"} />
                     Refresh
@@ -113,7 +111,7 @@ const WalletTab = () => {
                                 </Tr>
                             )}
                             {uniqueCoinsInHistory?.map((item: IUserHistoryItem, i: number) => {
-                                const coin = cryptosList?.data?.coins.find((el: Icoin) => el.name === item.coin);
+                                const coin = cryptosList?.coins.find((el: Icoin) => el.name === item.coin);
                                 return <ExpandableTableRow key={i} coin={coin} history={history || []} />;
                             })}
                         </Tbody>

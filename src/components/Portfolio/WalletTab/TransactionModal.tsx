@@ -22,8 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { formatDateToISOString } from "../../../utils/fotmerDate";
-import { useTransactionMutation } from "../../../store/api/serverApi";
-import { useAppSelector } from "../../../store/store";
+import { useAddTransactionMutation } from "../../../store/api/serverApi";
 import { Icoin } from "../../../types/coins.types";
 
 type PropsType = {
@@ -39,9 +38,8 @@ type InitTransactionType = {
 };
 const TransactionModal = ({ coins }: PropsType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const user = useAppSelector((state) => state.user.userData?.user);
 
-    const [register] = useTransactionMutation();
+    const [register] = useAddTransactionMutation();
 
     const currentDate = new Date();
 
@@ -55,7 +53,8 @@ const TransactionModal = ({ coins }: PropsType) => {
 
     const [transactionBody, setTransactionBody] = useState<InitTransactionType>(initTransactionBody);
 
-    const handleInput = (field: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => setTransactionBody({ ...transactionBody, [field]: e.currentTarget.value });
+    const handleInput = (field: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) =>
+        setTransactionBody({ ...transactionBody, [field]: e.currentTarget.value });
     const format = (val: number) => `$` + val;
     const parse = (val: string) => val.replace(/^\$/, "");
 
@@ -70,7 +69,7 @@ const TransactionModal = ({ coins }: PropsType) => {
 
     useEffect(() => {
         const selectedCoin = coins?.find((el: Icoin) => el.name === transactionBody.selectedCoin);
-        setTransactionBody({ ...transactionBody, perCoin: selectedCoin ? (+selectedCoin.price).toFixed(2).toString() : ""});
+        setTransactionBody({ ...transactionBody, perCoin: selectedCoin ? (+selectedCoin.price).toFixed(2).toString() : "" });
     }, [transactionBody.selectedCoin]);
 
     const selectOptions = coins?.map((el: Icoin, i: number) => (
@@ -86,15 +85,13 @@ const TransactionModal = ({ coins }: PropsType) => {
 
     const handleSubmitTransaction = (operation: string) => () => {
         register({
-            user_id: user?.id,
             coin: transactionBody.selectedCoin,
             quantity: transactionBody.quantity,
             price_per_coin: transactionBody.perCoin,
             note: transactionBody.note,
             total: (+transactionBody.quantity * +transactionBody.perCoin).toFixed(2),
             operation: operation,
-            date: transactionBody.date,
-            tg_nickname: user?.tg_nickname
+            date: transactionBody.date
         }).then(() => {
             handleClose();
         });

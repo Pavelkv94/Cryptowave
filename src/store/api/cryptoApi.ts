@@ -1,29 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { CoinHistoryDataType, ICoinStats, Icoin } from "../../types/coins.types";
 
-const cryptoApiHeaders = {
-    "X-RapidAPI-Key": import.meta.env.VITE_COINDESK_APIKEY,
-    "X-RapidAPI-Host": "coinranking1.p.rapidapi.com",
-    "ngrok-skip-browser-warning": "true"
-};
-
-const baseUrl = "https://coinranking1.p.rapidapi.com";
-
-const getRequest = (url: string) => ({ url, headers: cryptoApiHeaders });
+const baseUrl = import.meta.env.VITE_SERVER_URL;
 
 type CoinDataType = {
-    data: {
-        stats: ICoinStats;
-        coins: Icoin[];
-    };
-    isLoading: boolean;
+    stats: ICoinStats;
+    coins: Icoin[];
 };
 
 type CoinDetailsDataType = {
-    data: {
-        coin: Icoin;
-    };
-    isLoading: boolean;
+    coin: Icoin;
 };
 
 type CoinHistoryPayloadType = {
@@ -43,13 +29,13 @@ export const cryptoApi = createApi({
     }),
     endpoints: (builder) => ({
         getCryptos: builder.query<CoinDataType, number>({
-            query: (count) => getRequest(`/coins?limit=${count}`)
+            query: (count) => `${baseUrl}/external/coins?count=${count}`
         }),
         getCryptoDetails: builder.query<CoinDetailsDataType, string>({
-            query: (coinId) => getRequest(`/coin/${coinId}`)
+            query: (coinId) => `${baseUrl}/external/coin/${coinId}`
         }),
         getCryptoHistory: builder.query<CoinHistoryType, CoinHistoryPayloadType>({
-            query: ({ coinId, timePeriod }) => getRequest(`/coin/${coinId}/history?timePeriod=${timePeriod}`)
+            query: ({ coinId, timePeriod }) => `${baseUrl}/external/coin/${coinId}/history?timePeriod=${timePeriod}`
         })
     })
 });

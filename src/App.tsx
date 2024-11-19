@@ -6,25 +6,17 @@ import Cryptocurrencies from "./components/Cryptocurrencies/Cryptocurrencies";
 import CryptoDetails from "./components/Cryptocurrencies/CryptoDetails";
 import Exchanges from "./components/Exchanges/Exchanges";
 import News from "./components/News/News";
-import { useEffect } from "react";
-import { useActions } from "./hooks/useActions";
 import Portfolio from "./components/Portfolio/Portfolio";
+import { useGetMeQuery } from "./store/api/authApi";
 
 function App() {
-    const { checkAuth } = useActions();
+    const accessToken = localStorage.getItem("token");
 
-    useEffect(() => {
-        if (localStorage.getItem("token")) {
-            checkAuth();
-        }
-      //   if (localStorage.getItem("user")) {
-      //     checkAuth();
-      // }
-    }, []);
+    const { isFetching: isFetchingMe } = useGetMeQuery(null, { skip: !accessToken });
 
     return (
         <div className="app">
-            <Navbar />
+            <Navbar isFetchingMe={isFetchingMe} />
             <div className="main">
                 <div className="routes">
                     <Routes>

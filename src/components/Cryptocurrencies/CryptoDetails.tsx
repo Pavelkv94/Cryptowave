@@ -43,8 +43,8 @@ const CryptoDetails = () => {
     const { coinId } = useParams();
     const [timePeriod, setTimePeriod] = useState<string>("7d");
 
-    const { data, isLoading } = useGetCryptoDetailsQuery(coinId || "1", { selectFromResult: ({ data }) => ({ ...data }) });
-    const { data: coinHistory } = useGetCryptoHistoryQuery({ coinId, timePeriod }, { selectFromResult: ({ data }) => ({ ...data }) });
+    const { data, isLoading } = useGetCryptoDetailsQuery(coinId || "1");
+    const { data: coinHistory } = useGetCryptoHistoryQuery({ coinId, timePeriod });
 
     const cryptoDetails = data && data.coin;
 

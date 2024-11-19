@@ -66,7 +66,7 @@ const ExpandableTableRow = ({ coin, history }: PropsType) => {
                     </Link>
                 </Td>
 
-                <Td>${(coinPrice).toFixed(2)}</Td>
+                <Td>${coinPrice.toFixed(2)}</Td>
 
                 <Td color={(coin ? +coin.change : 0) < 0 ? "#d33535" : "rgb(88, 189, 125)"}>{coin?.change}%</Td>
                 <Td>
@@ -121,7 +121,7 @@ const ExpandableTableRow = ({ coin, history }: PropsType) => {
                                     <Text fontSize={14}>
                                         <b>Total:</b> ${el.total}
                                     </Text>
-                                    <Button colorScheme="red" onClick={() => handleDelete(el._id)}>
+                                    <Button colorScheme="red" onClick={() => handleDelete(el.id)}>
                                         Reject
                                     </Button>
                                 </Box>

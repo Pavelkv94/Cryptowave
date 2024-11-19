@@ -23,7 +23,7 @@ type PropsType = {
     onClose: () => void
 }
 const ChangeAvatarModal = ({ isOpen, onClose }: PropsType) => {
-    const user = useAppSelector((state) => state.user.userData?.user);
+    const user = useAppSelector((state) => state.user.userData);
     const [currentAvatar, setCurrentAvatar] = useState(user?.avatar_url || "");
 
     const [update] = useUpdateAvatarMutation();

@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Box, HStack, Heading, Image, Input, Skeleton, Stack, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import millify from "millify";
 import SmallChart from "../Homepage/SmallChart";
-import banner from "../../images/Exchanges.png";
+import banner from "../../assets/images/Exchanges.png";
 import { Link } from "react-router-dom";
 import { useGetCryptosQuery } from "../../store/api/cryptoApi";
 import { Icoin } from "../../types/coins.types";
 
 const Cryptocurrencies = () => {
-    const { data: cryptosList, isLoading } = useGetCryptosQuery(100, {selectFromResult: ({data}) => ({...data})});
+    const { data: cryptosList, isLoading } = useGetCryptosQuery(100);
 
     
     const [cryptos, setCryptos] = useState(cryptosList?.coins);

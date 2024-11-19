@@ -1,5 +1,4 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-
 import { createLogger } from "redux-logger";
 import { useSelector } from "react-redux";
 import { cryptoApi } from "./api/cryptoApi";

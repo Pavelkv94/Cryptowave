@@ -5,17 +5,22 @@ export interface IUserLogin {
 }
 
 export interface IUser {
-    accessToken: string;
-    refreshToken: string;
-    user: {
-        email: string;
-        id: string;
-        isActivated: boolean;
-        tg_nickname: string;
-        avatar_url: string;
+    id: string;
+    email: string;
+    createdAt: string;
+    emailConfirmation: {
+        confirmationCode: string;
+        expirationDate: string;
+        isConfirmed: boolean;
     };
+    balance: number;
+    avatar_url: string;
+    tg_nickname: string;
+    chat_id: string;
 }
-
+export interface ILoginOutput {
+    accessToken: string;
+}
 export interface IUserHistoryItem {
     coin: string;
     date: string;
@@ -26,6 +31,5 @@ export interface IUserHistoryItem {
     tg_nickname: string;
     total: string;
     user_id: string;
-    __v: number;
-    _id: string;
+    id: string;
 }

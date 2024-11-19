@@ -1,24 +1,24 @@
 import "./Navbar.scss";
-import logo from "../../images/CryptoWave1.svg";
+import logo from "../../assets/images/CryptoWave1.svg";
 import { Avatar, Button, Center, HStack, Image, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import AuthModal from "./AuthModal";
 import ChangeAvatarModal from "./ChangeAvatarModal";
 import { useAppSelector } from "../../store/store";
-import { useActions } from "../../hooks/useActions";
-import { useGetUserQuery } from "../../store/api/authApi";
+import { IUser } from "../../types/user.types";
+import { logoutUser } from "../../http";
 
-const Navbar = () => {
+type NavbarPropsType = {
+    isFetchingMe: boolean;
+};
+
+const Navbar = ({ isFetchingMe }: NavbarPropsType) => {
     const { pathname } = useLocation();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { logoutUser } = useActions();
     const navigate = useNavigate();
-    const user = useAppSelector((state) => state.user.userData?.user);
-    const authStatus = useAppSelector((state) => state.user);
+    const user: IUser | null = useAppSelector((state) => state.user.userData);
 
     const isActiveButton = (path: string) => (pathname === path ? "active" : "");
-
-    const { data: userData } = useGetUserQuery(user?.id, {skip: !user});
 
     const logout = () => {
         logoutUser();
@@ -56,11 +56,11 @@ const Navbar = () => {
                     </Link>
                 </HStack>
                 <Spacer />
-                {authStatus.isLoading ? (
+                {isFetchingMe ? (
                     <div style={{ width: "350px", color: "white" }}>Loading</div>
-                ) : authStatus.isAuth ? (
+                ) : user ? (
                     <HStack className="menu-additional-wrapper" spacing={"14px"}>
-                        <Avatar src={userData} cursor={"pointer"} onClick={onOpen} />
+                        <Avatar src={user.avatar_url} cursor={"pointer"} onClick={onOpen} />
                         <NavLink to={"/portfolio"}>
                             <Button colorScheme="messenger" variant="solid">
                                 Portfolio
@@ -77,7 +77,7 @@ const Navbar = () => {
                     </HStack>
                 )}
             </HStack>
-            {isOpen && <ChangeAvatarModal isOpen={isOpen} onClose={onClose}/>}
+            {isOpen && <ChangeAvatarModal isOpen={isOpen} onClose={onClose} />}
         </div>
     );
 };
