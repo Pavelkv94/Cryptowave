@@ -4,6 +4,10 @@ import { useRegistrationConfirmationMutation, useRegistrationEmailResendingMutat
 import "./Confirmation.scss";
 import { Button, Input } from "@chakra-ui/react";
 
+interface ErrorResponse {
+    errorsMessages: Array<{ message: string }>;
+}
+
 const Confirmation = () => {
     const { search } = useLocation();
     const queryParams = new URLSearchParams(search);
@@ -12,8 +16,8 @@ const Confirmation = () => {
     const [register, { error: registrationError, isSuccess: registrationSuccess }] = useRegistrationConfirmationMutation();
     const [resend, { error: resendError, isSuccess: resendSuccess }] = useRegistrationEmailResendingMutation();
 
-    const errorMessage = registrationError?.data.errorsMessages[0].message;
-    const resendErrorMessage = resendError?.data.errorsMessages[0].message;
+    const errorMessage = registrationError && "data" in registrationError ? (registrationError.data as ErrorResponse).errorsMessages[0]?.message : undefined;
+    const resendErrorMessage = resendError && "data" in resendError ? (resendError.data as ErrorResponse).errorsMessages[0]?.message : undefined;
 
     const isExpired = errorMessage === "Your activation link is expired. Resend activation email.";
 

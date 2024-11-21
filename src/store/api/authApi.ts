@@ -57,7 +57,7 @@ export const authApi = createApi({
         getMe: builder.query({
             query: () => getAuthorizedRequest("/auth/me"),
             providesTags: ["Me"],
-            onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+            onQueryStarted: async (_arg, { dispatch, queryFulfilled }) => {
                 try {
                     const { data } = await queryFulfilled;
                     dispatch(setUser(data)); // Store the response data in Redux state
@@ -70,7 +70,7 @@ export const authApi = createApi({
             query: (payload) => {
                 return postRequest("/auth/login", "POST", payload);
             },
-            async onQueryStarted(payload, { dispatch, queryFulfilled }) {
+            async onQueryStarted(_payload, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;
                     localStorage.setItem("token", data.accessToken); // Save token after login

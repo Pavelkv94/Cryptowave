@@ -17,10 +17,6 @@ type CoinHistoryPayloadType = {
     timePeriod: string;
 };
 
-type CoinHistoryType = {
-    data: CoinHistoryDataType;
-    isLoading: boolean;
-};
 
 export const cryptoApi = createApi({
     reducerPath: "cryptoApi",
@@ -34,7 +30,7 @@ export const cryptoApi = createApi({
         getCryptoDetails: builder.query<CoinDetailsDataType, string>({
             query: (coinId) => `${baseUrl}/external/coin/${coinId}`
         }),
-        getCryptoHistory: builder.query<CoinHistoryType, CoinHistoryPayloadType>({
+        getCryptoHistory: builder.query<CoinHistoryDataType, CoinHistoryPayloadType>({
             query: ({ coinId, timePeriod }) => `${baseUrl}/external/coin/${coinId}/history?timePeriod=${timePeriod}`
         })
     })

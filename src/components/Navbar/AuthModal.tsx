@@ -21,6 +21,14 @@ type AuthModalPropsType = {
     mode: "Login" | "Registration";
 };
 
+interface RegistrationErrorResponse {
+    errorsMessages: Array<{ field: string; message: string }>;
+}
+
+interface LoginErrorResponse {
+    message: string;
+}
+
 const AuthModal = ({ mode }: AuthModalPropsType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
@@ -54,10 +62,14 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
     };
 
     useEffect(() => {
+        const registrationErrorMessages =
+            registrationError && "data" in registrationError ? (registrationError.data as RegistrationErrorResponse).errorsMessages : [];
+        const loginErrorMessage = loginError && "data" in loginError ? (loginError.data as LoginErrorResponse).message : undefined;
+        
         registrationError &&
             toast({
                 title: "Error.",
-                description: `An error occurred during registration. ${registrationError.data.errorsMessages.map(
+                description: `An error occurred during registration. ${registrationErrorMessages.map(
                     (error: { field: string; message: string }) => `${error.field} - ${error.message}`
                 )}`,
                 status: "error",
@@ -75,7 +87,7 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
         loginError &&
             toast({
                 title: "Error.",
-                description: "An error occurred during login." + (loginError.data.message ? loginError.data.message : ""),
+                description: "An error occurred during login." + (loginErrorMessage ? loginErrorMessage : ""),
                 status: "error",
                 duration: 9000,
                 isClosable: true
