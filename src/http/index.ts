@@ -27,7 +27,8 @@ axiosInstance.interceptors.response.use(
                 return axiosInstance.request(originRequest);
             } catch (error) {
                 console.error("Token refresh failed:", error);
-                await logoutUser();
+                localStorage.removeItem("token");
+                await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
             }
         }
         throw error;
@@ -39,11 +40,6 @@ const refreshAccessToken = async (): Promise<string> => {
     const newToken = response.data.accessToken;
     localStorage.setItem("token", newToken);
     return newToken;
-};
-
-export const logoutUser = async () => {
-    localStorage.removeItem("token");
-    await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
 };
 
 export default axiosInstance;

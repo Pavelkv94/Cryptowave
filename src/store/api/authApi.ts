@@ -2,7 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { ILoginOutput, IUser, IUserLogin } from "../../types/user.types";
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import axiosInstance from "../../http";
-import { setUser } from "../user/user.slice";
+import { setIsAuth, setUser } from "../user/user.slice";
 
 const authApiHeaders = {
     "Content-Type": "application/json"
@@ -10,23 +10,15 @@ const authApiHeaders = {
 
 const baseUrl = import.meta.env.VITE_SERVER_URL;
 
-const token: string = localStorage.getItem("token") || "";
+const getToken = (): string => localStorage.getItem("token") || "";
 
 type AvatarPayloadType = {
     avatar_url: string;
-    user_id: string;
 };
 
-const getAuthorizedRequest = (url: string) => ({ url, headers: { ...authApiHeaders, Authorization: `Bearer ${token}` } });
+const getAuthorizedRequest = (url: string) => ({ url, headers: { ...authApiHeaders, Authorization: `Bearer ${getToken()}` } });
 
 const postRequest = (url: string, method: string, payload: object) => ({ url, method, data: payload, headers: { ...authApiHeaders } });
-
-const postAuthorizedRequest = (url: string, method: string, payload: object) => ({
-    url,
-    method,
-    body: payload,
-    headers: { ...authApiHeaders, Authorization: `Bearer ${JSON.parse(token)}` }
-});
 
 const axiosBaseQuery =
     ({ baseUrl } = { baseUrl: "" }) =>
@@ -80,25 +72,59 @@ export const authApi = createApi({
             },
             async onQueryStarted(payload, { dispatch, queryFulfilled }) {
                 try {
-                    console.log("AFTER LOGIN");
-
                     const { data } = await queryFulfilled;
                     localStorage.setItem("token", data.accessToken); // Save token after login
-                    // Optionally invalidate "Me" tag to refresh user info after login
-                    dispatch(authApi.util.invalidateTags(["Me"]));
+                    dispatch(setIsAuth(true)); // Store the response data in Redux state
                 } catch (error) {
                     console.error("Login failed:", error);
                 }
-            }
+            },
+            invalidatesTags: ["Me"]
         }),
         registration: builder.mutation<IUser, IUserLogin>({
             query: (payload) => postRequest("/auth/registration", "POST", payload)
         }),
+        registrationConfirmation: builder.mutation<null, { code: string | null }>({
+            query: (payload) => postRequest("/auth/registration-confirmation", "POST", payload)
+        }),
         updateAvatar: builder.mutation<null, AvatarPayloadType>({
-            query: (payload) => postAuthorizedRequest(`/auth/user/${payload.user_id}/updateAvatar`, "POST", { avatar_url: payload.avatar_url }),
-            invalidatesTags: ["UserAvatar"]
+            query: (payload) => ({ url: `/users/updateAvatar`, method: "POST", data: { avatar_url: payload.avatar_url }, withCredentials: true }),
+            invalidatesTags: ["UserAvatar", "Me"]
+        }),
+        logout: builder.mutation<void, void>({
+            query: () => ({
+                url: "/auth/logout",
+                method: "POST",
+                headers: { ...authApiHeaders } // No token needed for logout
+            }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+
+                    // Clear the token from localStorage
+                    localStorage.removeItem("token");
+
+                    // Optionally reset auth-related state
+                    dispatch(setIsAuth(false));
+                    dispatch(setUser(null)); // Reset user state
+                } catch (error) {
+                    console.error("Logout failed:", error);
+                }
+            }
+        }),
+        registrationEmailResending: builder.mutation<null, { email: string }>({
+            query: (payload) => postRequest("/auth/registration-email-resending", "POST", payload)
         })
     })
 });
 
-export const { useRegistrationMutation, useUpdateAvatarMutation, useGetUserQuery, useGetMeQuery, useLoginMutation } = authApi;
+export const {
+    useRegistrationMutation,
+    useUpdateAvatarMutation,
+    useGetUserQuery,
+    useGetMeQuery,
+    useLoginMutation,
+    useLogoutMutation,
+    useRegistrationConfirmationMutation,
+    useRegistrationEmailResendingMutation
+} = authApi;

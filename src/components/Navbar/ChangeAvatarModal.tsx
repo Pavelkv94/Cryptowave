@@ -11,6 +11,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Text,
+    VStack,
     Wrap,
     WrapItem
 } from "@chakra-ui/react";
@@ -19,9 +20,9 @@ import { useAppSelector } from "../../store/store";
 import { useUpdateAvatarMutation } from "../../store/api/authApi";
 
 type PropsType = {
-    isOpen: boolean
-    onClose: () => void
-}
+    isOpen: boolean;
+    onClose: () => void;
+};
 const ChangeAvatarModal = ({ isOpen, onClose }: PropsType) => {
     const user = useAppSelector((state) => state.user.userData);
     const [currentAvatar, setCurrentAvatar] = useState(user?.avatar_url || "");
@@ -48,10 +49,10 @@ const ChangeAvatarModal = ({ isOpen, onClose }: PropsType) => {
         "https://cdn.icon-icons.com/icons2/1736/PNG/512/4043273-animal-avatar-mutton-sheep_113242.png"
     ];
 
-    const updateAvatar = (url:string) => () => {
-        update({ avatar_url: url, user_id: user ? user.id : "" }).then(() => {
+    const updateAvatar = (url: string) => () => {
+        update({ avatar_url: url }).then(() => {
             onClose();
-        })
+        });
     };
 
     return (
@@ -63,7 +64,10 @@ const ChangeAvatarModal = ({ isOpen, onClose }: PropsType) => {
                 <ModalBody>
                     <HStack alignItems={"flex-start"} marginBottom={4}>
                         <Avatar src={currentAvatar} size="xl" />
-                        <Heading>{user?.email}</Heading>
+                        <VStack>
+                            <Heading size="md">{user?.email}</Heading>
+                            <Heading size="sm">{user?.emailConfirmation.isConfirmed ? "Verified" : "Not verified"}</Heading>
+                        </VStack>
                     </HStack>
                     <Text marginBottom={4} color={"gray"}>
                         Here you can choose new avatar:

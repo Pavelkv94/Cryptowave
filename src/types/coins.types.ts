@@ -84,12 +84,11 @@ export interface INewsArticle {
 }
 
 export interface IWatchItem {
-    _id: string;
+    id: string;
     symbol: string;
     name: string;
     iconUrl: string;
     tg_nickname: string;
     user_id: string;
     changing: string;
-    __v: number;
 }

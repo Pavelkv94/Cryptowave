@@ -3,19 +3,25 @@ import { IUser } from "../../types/user.types";
 
 interface UserState {
     userData: IUser | null;
+    isAuth: boolean;
 }
 
 const initialState: UserState = {
-    userData: null
+    userData: null,
+    isAuth: false
 };
 
 export const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setUser(state, action: PayloadAction<IUser>) {
+        setUser(state, action: PayloadAction<IUser | null>) {
             state.userData = action.payload;
         },
+        setIsAuth(state, action: PayloadAction<boolean>) {
+            state.isAuth = action.payload;
+        },
+
         clearUser(state) {
             state.userData = null;
         }
@@ -79,6 +85,6 @@ export const userSlice = createSlice({
     }
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, setIsAuth, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;

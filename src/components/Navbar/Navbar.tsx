@@ -6,7 +6,8 @@ import AuthModal from "./AuthModal";
 import ChangeAvatarModal from "./ChangeAvatarModal";
 import { useAppSelector } from "../../store/store";
 import { IUser } from "../../types/user.types";
-import { logoutUser } from "../../http";
+import { useLogoutMutation } from "../../store/api/authApi";
+
 
 type NavbarPropsType = {
     isFetchingMe: boolean;
@@ -17,11 +18,13 @@ const Navbar = ({ isFetchingMe }: NavbarPropsType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const navigate = useNavigate();
     const user: IUser | null = useAppSelector((state) => state.user.userData);
+    const [logout] = useLogoutMutation();
 
     const isActiveButton = (path: string) => (pathname === path ? "active" : "");
 
-    const logout = () => {
-        logoutUser();
+    const logoutUser = () => {
+        // deleteUser(user.id);
+        logout()
         navigate("/");
     };
 
@@ -66,7 +69,7 @@ const Navbar = ({ isFetchingMe }: NavbarPropsType) => {
                                 Portfolio
                             </Button>
                         </NavLink>
-                        <Button colorScheme="teal" variant="solid" onClick={logout}>
+                        <Button colorScheme="teal" variant="solid" onClick={logoutUser}>
                             Logout
                         </Button>
                     </HStack>

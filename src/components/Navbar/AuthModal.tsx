@@ -75,7 +75,7 @@ const AuthModal = ({ mode }: AuthModalPropsType) => {
         loginError &&
             toast({
                 title: "Error.",
-                description: "An error occurred during login." + loginError.data.message,
+                description: "An error occurred during login." + (loginError.data.message ? loginError.data.message : ""),
                 status: "error",
                 duration: 9000,
                 isClosable: true

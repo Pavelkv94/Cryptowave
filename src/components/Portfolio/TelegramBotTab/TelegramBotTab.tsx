@@ -246,7 +246,7 @@ const TelegramBotTab = () => {
                                                     colorScheme="red"
                                                     aria-label="Delete watchlist item"
                                                     icon={<DeleteIcon />}
-                                                    onClick={deleteWatchListItem(el._id)}
+                                                    onClick={deleteWatchListItem(el.id)}
                                                 />
                                             </Td>
                                         </Tr>
