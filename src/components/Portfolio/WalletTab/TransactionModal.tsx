@@ -86,10 +86,10 @@ const TransactionModal = ({ coins }: PropsType) => {
     const handleSubmitTransaction = (operation: string) => () => {
         register({
             coin: transactionBody.selectedCoin,
-            quantity: transactionBody.quantity,
-            price_per_coin: transactionBody.perCoin,
+            quantity: transactionBody.quantity.toString(),
+            price_per_coin: transactionBody.perCoin.toString(),
             note: transactionBody.note,
-            total: (+transactionBody.quantity * +transactionBody.perCoin).toFixed(2),
+            total: (+transactionBody.quantity * +transactionBody.perCoin).toFixed(2).toString(),
             operation: operation,
             date: transactionBody.date
         }).then(() => {
